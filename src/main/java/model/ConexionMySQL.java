@@ -15,12 +15,12 @@ import java.sql.SQLException;
  */
 public class ConexionMySQL {
     
-    //WARNING quiza el mvc tenga que ser el nombre del proyecto, pero no creo
-    private static final String database = "proyectoingsoft";
-    private static final String server = "jdbc:mysql://localhost:3306/" + database;
+    //Intenten no cambiar esto o no le den commit a este archivo.
     private static final String login = "root";
     private static final String pass = "Halderman";
 
+    private static final String database = "proyectoingsoft";
+    private static final String server = "jdbc:mysql://localhost:3306/" + database;
     
     /**
      * Regresa una conexion con la base de datos.
