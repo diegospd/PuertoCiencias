@@ -66,7 +66,7 @@ public class RegistroUsuario extends HttpServlet {
         boolean ok = !existeUsuario && !existeCorreo; 
         ok = ok && numCuentaEsValida && passCoinciden && passValida;
         
-        
+        //Esto es cuando se registra alguien completamente nuevo
         if (ok) {
             String passHash = Cifrado.sha1(pass2);
             Usuario nuevo = new Usuario(usuario, correo, passHash);
@@ -75,10 +75,7 @@ public class RegistroUsuario extends HttpServlet {
             } catch (SQLException ex) {
                 Logger.getLogger(RegistroUsuario.class.getName()).log(Level.SEVERE, null, ex);
             }
-            SendGrid.enviarCorreo(correo+"@ciencias.unam.mx", "[PuertoCiencias] Confirmar Registro", "Hola, aquí debe ir un link para confirmar el correo.\nAhi había una nueva línea.\nSaludos.");
-            
-            
-    
+            mandarVerificacionCorreo(nuevo);
         }
         
         
@@ -98,9 +95,19 @@ public class RegistroUsuario extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet RegistroUsuario at " + request.getContextPath() + "</h1>");
+            out.println("Te mandamos una confirmación a tu correo. Revisalo para poder acceder a Puerto Ciencias");
             out.println("</body>");
             out.println("</html>");
         }
+    }
+  
+    private static void mandarVerificacionCorreo(Usuario usuario) {
+        String texto = "¡Hola, " + usuario.getUsername() +"!\n\n";
+        texto += "Te damos la bienvenida a Puerto Ciencias.\nPara poder usar tu cuenta por favor accede al siguiente enlace.\n\n";
+        texto += constantes.Constantes.DIR_PUERTO + "VerificarCorreo?codigo="+usuario.getCodigo() + "\n\n\n";
+        texto += "Que la fuerza te acompañe,\nAstillero Ciencias";
+    
+        SendGrid.enviarCorreo(usuario.getCorreo() + "@ciencias.unam.mx", "[PuertoCiencias] Confirmar Registro", texto);
     }
 
 
@@ -109,7 +116,7 @@ public class RegistroUsuario extends HttpServlet {
      * @param pass la contrasena
      * @return True si sí, False si no
      */
-    private static boolean contrasenaValida(String pass) {
+    protected static boolean contrasenaValida(String pass) {
         boolean ok = true;
         ok = ok && pass.length() >= 6;
         ok = ok && pass.length() <= 16;
@@ -124,7 +131,7 @@ public class RegistroUsuario extends HttpServlet {
      * @param correo
      * @return 
      */
-    private static String limpiaCorreo(String correo) {
+    protected static String limpiaCorreo(String correo) {
         String[] arr = correo.split("@");
         return arr[0];
     }
@@ -135,7 +142,7 @@ public class RegistroUsuario extends HttpServlet {
      * @param cuenta Una string a la cual le saca los números. Puede tener guiones y más basura
      * @return True si es válido, false eoc
      */
-    private static boolean numCuentaValido(String cuenta) {
+    protected static boolean numCuentaValido(String cuenta) {
         int tam = "411001896".length();
         char[] arreglo = cuenta.toCharArray();
         String numeros = "";
