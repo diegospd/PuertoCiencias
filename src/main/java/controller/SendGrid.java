@@ -22,6 +22,12 @@ import java.util.logging.Logger;
  */
 public class SendGrid {
     
+    /**
+     * Manda un correo electrónico
+     * @param para La dirección a la que se manda
+     * @param asunto El asunto del correo
+     * @param texto El cuerpo del correo
+     */
     public static void enviarCorreo(String para, String asunto, String texto) {
         try {
             texto = URLEncoder.encode(texto, "UTF-8");

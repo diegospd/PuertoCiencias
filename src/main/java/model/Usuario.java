@@ -5,15 +5,11 @@
  */
 package model;
 
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -21,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class Usuario {
 
-    private int idCuenta;
+    private final int idCuenta;
     private String username;
     private String correo;
     private String pass;
@@ -34,8 +30,13 @@ public class Usuario {
         this.pass = pass;
     }
     
-    
+    /**
+     * Dice si el correo existe en la base de datos
+     * @param correo el correo sin @ciencias.unam.mx
+     * @return True si existe, false si no
+     */
     public static boolean existeCorreo(String correo) {
+        correo = correo.trim();
         Connection conn = null;
         ResultSet result = null;
         PreparedStatement stmt = null;
@@ -75,6 +76,7 @@ public class Usuario {
      * @return  True si existe false si no
      */
     public static boolean existeUsuario(String username) {
+        username = username.trim();
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet result = null;
@@ -122,6 +124,7 @@ public class Usuario {
         try {
             conn = ConexionMySQL.darConexion();
             stmt = conn.createStatement();
+            //El ifnull es para que regrese cero si no hay máximo cuando la tabla está vacía.
             result = stmt.executeQuery("SELECT IfNull(MAX(idCuenta),0) AS max from usuario");
             while (result.next()) {
                 maxId = Integer.parseInt(result.getString("max"));
@@ -147,6 +150,10 @@ public class Usuario {
         return maxId;
     }
 
+    /**
+     * Inserta al usuario en la base de datos
+     * @throws SQLException 
+     */
     public void insertar() throws SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;

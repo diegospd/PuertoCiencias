@@ -104,6 +104,11 @@ public class RegistroUsuario extends HttpServlet {
     }
 
 
+    /**
+     * Dice si la contrasena tiene el formato que dimos en el SRS
+     * @param pass la contrasena
+     * @return True si sí, False si no
+     */
     private static boolean contrasenaValida(String pass) {
         boolean ok = true;
         ok = ok && pass.length() >= 6;
@@ -114,13 +119,22 @@ public class RegistroUsuario extends HttpServlet {
         return ok;
     }
     
+    /**
+     * Toma un string y devuelve la primera parte hasta encontrar un @
+     * @param correo
+     * @return 
+     */
     private static String limpiaCorreo(String correo) {
         String[] arr = correo.split("@");
         return arr[0];
     }
     
     
-    
+    /**
+     * Revisa que el dígito verificador coincida con el número de cuenta
+     * @param cuenta Una string a la cual le saca los números. Puede tener guiones y más basura
+     * @return True si es válido, false eoc
+     */
     private static boolean numCuentaValido(String cuenta) {
         int tam = "411001896".length();
         char[] arreglo = cuenta.toCharArray();
@@ -138,6 +152,12 @@ public class RegistroUsuario extends HttpServlet {
 
     }
 
+    /**
+     * Esta ya recibe el string se solo números. La llama la otra función, no
+     * debo usarla fuera de eso.
+     * @param cuenta
+     * @return 
+     */
     private static boolean validaCuenta(String cuenta) {
         int suma = 0;
         for (int i = 0; i < cuenta.length() - 1; i++) {
