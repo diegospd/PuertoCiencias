@@ -30,6 +30,7 @@ public class SendGrid {
      */
     public static void enviarCorreo(String para, String asunto, String texto) {
         try {
+            para = URLEncoder.encode(para, "UTF-8");
             texto = URLEncoder.encode(texto, "UTF-8");
             asunto = URLEncoder.encode(asunto, "UTF-8");
             URL sendgrid = new URL("https://api.sendgrid.com/api/mail.send.json?api_"

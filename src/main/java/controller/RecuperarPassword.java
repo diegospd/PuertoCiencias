@@ -5,6 +5,7 @@
  */
 package controller;
 
+import static constantes.Constantes.DIR_PUERTO;
 import static controller.RegistroUsuario.contrasenaValida;
 import static controller.RegistroUsuario.numCuentaValido;
 import java.io.IOException;
@@ -71,6 +72,7 @@ public class RecuperarPassword extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }
+        response.sendRedirect(DIR_PUERTO + "login.jsp");
     }
     
     

@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+      
+      <lifecycle>
+            <phase-listener>
+                  controller.AuthenticationPhaseListener
+            </phase-listener>
+      </lifecycle>
+      
+      
+      <navigation-rule>
+            
+            <navigation-case>
+                  <from-outcome>login</from-outcome>
+                  <to-view-id>/login.jsp</to-view-id>
+                  <redirect/>
+            </navigation-case>
+            
+            <navigation-case>
+                  <from-outcome>logout</from-outcome>
+                  <to-view-id>/login.jsp</to-view-id>
+                  <redirect/>
+            </navigation-case>
+            
+            <navigation-case>
+                  <from-outcome>create</from-outcome>
+                  <to-view-id>/create.jsp</to-view-id>            
+            </navigation-case>
+            
+            <navigation-case>
+                  <from-outcome>app-main</from-outcome>
+                  <to-view-id>/principal.jsp</to-view-id>
+                  <redirect/>
+            </navigation-case>
+            
+      </navigation-rule>
+
+      
+</faces-config>
+
+<!--
+<navigation-rule> 
+ <from-view-id>/pages/inputname.jsp</from-view-id> 
+  <navigation-case> 
+    <from-outcome>sayHello</from-outcome> 
+    <to-view-id>/pages/greeting.jsp</to-view-id> 
+  </navigation-case> 
+  <navigation-case> 
+    <to-view-id>/pages/goodbye.jsp</to-view-id> 
+  </navigation-case> 
+</navigation-rule>  
+-->
+

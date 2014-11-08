@@ -5,6 +5,7 @@
  */
 package controller;
 
+import static constantes.Constantes.DIR_PUERTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -45,7 +46,7 @@ public class ConfirmarCambioPassword extends HttpServlet {
         }
         
         
-        
+        response.sendRedirect(DIR_PUERTO + "login.jsp");
         
         
         try (PrintWriter out = response.getWriter()) {
@@ -61,6 +62,8 @@ public class ConfirmarCambioPassword extends HttpServlet {
             out.println("</body>");
             out.println("</html>");
         }
+        
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

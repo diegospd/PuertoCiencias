@@ -4,7 +4,12 @@
     Author     : diego
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html"%>
+<%@page pageEncoding="UTF-8"%>
+
+<%@taglib prefix="f" uri="http://java.sun.com/jsf/core"%>
+<%@taglib prefix="h" uri="http://java.sun.com/jsf/html"%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,7 +19,7 @@
     <body>
         <h1>Esta es la página de recuperación de contraseña!</h1>
       
-        <form action="RecuperarPassword" method="POST">
+        <form value="login" action="RecuperarPassword" method="POST">
             Escribe tu dirección de correo
             </br>
             <input type="text" name="correo" value="" />@ciencias.unam.mx
