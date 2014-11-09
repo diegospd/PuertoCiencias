@@ -68,14 +68,14 @@ public class UserManager {
                   }
 
                   //Deben de tener el formato correcto
-                  if (!RegistroUsuario.contrasenaValida(pass1)) {
+                  if (!contrasenaValida(pass1)) {
                         FacesMessage message = new FacesMessage("La contraseña debe tener entre 6 y 16 caracteres alfanuméricos.");
                         context.addMessage(null, message);
                         return null;
                   }
 
                   //El número de cuenta debe ser válido
-                  if (!RegistroUsuario.numCuentaValido(numCuenta)) {
+                  if (!numCuentaValido(numCuenta)) {
                         FacesMessage message = new FacesMessage("El número de cuenta no es válido. Deben de ser 9 dígitos.");
                         context.addMessage(null, message);
                         return null;
@@ -190,6 +190,96 @@ public class UserManager {
                   return null;
             }
       }
+      
+      
+          
+      
+      public static void mandarVerificacionCorreo(Usuario usuario) {
+            String texto = "¡Hola, " + usuario.getUsername() + "!\n\n";
+            texto += "Te damos la bienvenida a Puerto Ciencias.\nPara poder usar tu cuenta por favor accede al siguiente enlace.\n\n";
+            texto += constantes.Constantes.DIR_PUERTO + "VerificarCorreo?codigo=" + usuario.getCodigo() + "\n\n\n";
+            texto += "Que la fuerza te acompañe,\nAstillero Ciencias";
+
+            SendGrid.enviarCorreo(usuario.getCorreo() + "@ciencias.unam.mx", "[PuertoCiencias] Confirmar Registro", texto);
+      }
+
+      /**
+       * Dice si la contrasena tiene el formato que dimos en el SRS
+       *
+       * @param pass la contrasena
+       * @return True si sí, False si no
+       */
+      protected static boolean contrasenaValida(String pass) {
+            boolean ok = true;
+            ok = ok && pass.length() >= 6;
+            ok = ok && pass.length() <= 16;
+            for (int i = 1; i < pass.length(); i++) {
+                  ok = ok && Character.isLetterOrDigit(pass.charAt(i));
+            }
+            return ok;
+      }
+
+      /**
+       * Toma un string y devuelve la primera parte hasta encontrar un @
+       *
+       * @param correo
+       * @return
+       */
+      protected static String limpiaCorreo(String correo) {
+            String[] arr = correo.split("@");
+            return arr[0];
+      }
+
+      /**
+       * Revisa que el dígito verificador coincida con el número de cuenta
+       *
+       * @param cuenta Una string a la cual le saca los números. Puede tener guiones y más basura
+       * @return True si es válido, false eoc
+       */
+      protected static boolean numCuentaValido(String cuenta) {
+            if (cuenta == null) {
+                  return false;
+            }
+
+            int tam = "411001896".length();
+            char[] arreglo = cuenta.toCharArray();
+            String numeros = "";
+            for (int i = 0; i < cuenta.length(); i++) {
+                  if (Character.isDigit(arreglo[i])) {
+                        numeros += arreglo[i];
+                  }
+            }
+            System.out.println(numeros);
+            if (numeros.length() == tam) {
+                  return validaCuenta(numeros);
+            }
+            return false;
+
+      }
+
+      /**
+       * Esta ya recibe el string se solo números. La llama la otra función, no debo usarla fuera de eso.
+       *
+       * @param cuenta
+       * @return
+       */
+      private static boolean validaCuenta(String cuenta) {
+            int suma = 0;
+            for (int i = 0; i < cuenta.length() - 1; i++) {
+                  int num = Integer.parseInt("" + cuenta.charAt(i));
+                  if (i % 2 == 0) {
+                        suma += 3 * num;
+                  } else {
+                        suma += 7 * num;
+                  }
+            }
+
+            int verificador = Integer.parseInt("" + cuenta.charAt(cuenta.length() - 1));
+            System.out.println(verificador);
+            return verificador == suma % 10;
+      }
+
+      
 
       public String getUsername() {
             return username;

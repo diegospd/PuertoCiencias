@@ -5,7 +5,7 @@
  */
 package model;
 
-import controller.RegistroUsuario;
+import controller.SendGrid;
 import static funciones.Cifrado.sha1;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,12 +30,13 @@ public class Usuario {
 
       /**
        * Hace un Usuario con los datos tal cual se le pasan.
+       *
        * @param idCuenta
        * @param username
        * @param correo
        * @param pass
        * @param codigo
-       * @param activada 
+       * @param activada
        */
       public Usuario(int idCuenta, String username, String correo, String pass, String codigo, boolean activada) {
             this.idCuenta = idCuenta;
@@ -45,13 +46,10 @@ public class Usuario {
             this.codigo = codigo;
             this.activada = activada;
       }
-      
-      
 
       /**
-       * Hace un Usuario. La password es la misma que se le pasa.
-       * El codigo es hash de username correo y pass
-       * el id es el máximo + 1
+       * Hace un Usuario. La password es la misma que se le pasa. El codigo es hash de username correo y pass el id es el máximo + 1
+       *
        * @param username
        * @param correo
        * @param pass Debe de estar hasheada antes
@@ -66,11 +64,12 @@ public class Usuario {
       }
 
       /**
-       * Este es el usuario que creo para registrar gente. 
+       * Este es el usuario que creo para registrar gente.
+       *
        * @param username
        * @param correo
        * @param pass
-       * @return 
+       * @return
        */
       public static Usuario hacerUsuarioDeRegistro(String username, String correo, String pass) {
             pass = sha1(pass);
@@ -80,28 +79,31 @@ public class Usuario {
             int idCuenta = getMaxId() + 1;
             return new Usuario(idCuenta, username, correo, pass, codigo, false);
       }
-      
-      
+
       /**
        * Dice si el hash del password del objeto is igual al hash del password que se le pasa.
+       *
        * @param password
-       * @return 
+       * @return
        */
       public boolean passwordCorrecta(String password) {
             return this.pass.equals(sha1(password.trim()));
       }
-     
+
       public void mandarVerificacionCorreo() {
-            RegistroUsuario.mandarVerificacionCorreo(this);
+
+            String texto = "¡Hola, " + getUsername() + "!\n\n";
+            texto += "Te damos la bienvenida a Puerto Ciencias.\nPara poder usar tu cuenta por favor accede al siguiente enlace.\n\n";
+            texto += constantes.Constantes.DIR_PUERTO + "VerificarCorreo?codigo=" + getCodigo() + "\n\n\n";
+            texto += "Que la fuerza te acompañe,\nAstillero Ciencias";
+            SendGrid.enviarCorreo(getCorreo() + "@ciencias.unam.mx", "[PuertoCiencias] Confirmar Registro", texto);
       }
-      
-      
-      
-      
+
       /**
        * Busca por username y devuelve un Usuario con los datos de la DB o null si no ecnotnro.
+       *
        * @param username
-       * @return 
+       * @return
        */
       public static Usuario encontrarPorUsername(String username) {
             Connection conn = null;
@@ -119,10 +121,10 @@ public class Usuario {
                         String codigo = result.getString("codigo");
                         String pass = result.getString("pass");
                         boolean activada = result.getBoolean("activada");
-                        
+
                         return new Usuario(idCuenta, username, correo, pass, codigo, activada);
                   }
-                  
+
                   return null;
 
             } catch (SQLException e) {
@@ -136,7 +138,7 @@ public class Usuario {
                               //Que no pasa!
                         }
                   }
-             
+
                   if (conn != null) {
                         try {
                               conn.close();
@@ -144,12 +146,11 @@ public class Usuario {
                               //Tampoco acá
                         }
                   }
-                  
+
             }
             return null;
       }
-      
-      
+
       /**
        * Dice si el correo existe en la base de datos
        *
@@ -182,7 +183,7 @@ public class Usuario {
                               //Que no pasa!
                         }
                   }
-             
+
                   if (conn != null) {
                         try {
                               conn.close();
@@ -190,12 +191,11 @@ public class Usuario {
                               //Tampoco acá
                         }
                   }
-                  
+
             }
             return existe;
       }
 
-      
       /**
        * Dice si un username existe en la base de datos;
        *
@@ -236,7 +236,6 @@ public class Usuario {
             return existe;
       }
 
-      
       /**
        * Obtiene el id más grande que haya en la tabla usuario
        *
@@ -277,7 +276,6 @@ public class Usuario {
             return maxId;
       }
 
-      
       /**
        * Inserta al usuario en la base de datos
        *
@@ -315,6 +313,7 @@ public class Usuario {
 
       /**
        * Dice si hay algun registro en la DB con el codigo dado.
+       *
        * @param codigo
        * @return true si si, false si no.
        */
@@ -353,13 +352,12 @@ public class Usuario {
 
       }
 
-      
-
       /**
-       * Busca el codigo y cuando lo encuentra lo hace null y cambia el hash del password por que se le pasa.
-       * No avisa si hace cambio o no, debe de ser llamado sólo si existeCodigo(codigo) fue true
+       * Busca el codigo y cuando lo encuentra lo hace null y cambia el hash del password por que se le pasa. No avisa si hace cambio o no, debe de
+       * ser llamado sólo si existeCodigo(codigo) fue true
+       *
        * @param codigo
-       * @param nuevoHash 
+       * @param nuevoHash
        */
       public static void verificarCambioPassword(String codigo, String nuevoHash) {
 
@@ -371,8 +369,10 @@ public class Usuario {
                   stmt.setString(1, nuevoHash);
                   stmt.setString(2, codigo);
                   int nr = stmt.executeUpdate();
+
             } catch (SQLException ex) {
-                  Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                  Logger.getLogger(Usuario.class
+                          .getName()).log(Level.SEVERE, null, ex);
             } finally {
                   try {
                         if (stmt != null) {
@@ -392,12 +392,11 @@ public class Usuario {
 
       }
 
-      
-      
       /**
        * Busca en la tabla usuario por el correo y actualiza el codigo al que se le da
+       *
        * @param correo
-       * @param codigo 
+       * @param codigo
        */
       public static void nuevoCodigo(String correo, String codigo) {
 
@@ -409,8 +408,10 @@ public class Usuario {
                   stmt.setString(1, codigo);
                   stmt.setString(2, correo);
                   int nr = stmt.executeUpdate();
+
             } catch (SQLException ex) {
-                  Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                  Logger.getLogger(Usuario.class
+                          .getName()).log(Level.SEVERE, null, ex);
             } finally {
                   try {
                         if (stmt != null) {
@@ -430,10 +431,9 @@ public class Usuario {
 
       }
 
-      
       /**
-       * Recibe un codigo, busca en la tabla a quien tenga ese codigo.
-       * Cuando lo encuentra lo actualiza a null y en activada pone 1
+       * Recibe un codigo, busca en la tabla a quien tenga ese codigo. Cuando lo encuentra lo actualiza a null y en activada pone 1
+       *
        * @param codigo Lo que va a buscar
        * @return true si hizo algún cambio en la BD, false eoc.
        */
@@ -447,8 +447,10 @@ public class Usuario {
                         stmt.setString(1, codigo);
                         int nr = stmt.executeUpdate();
                         return true;
+
                   } catch (SQLException ex) {
-                        Logger.getLogger(Usuario.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(Usuario.class
+                                .getName()).log(Level.SEVERE, null, ex);
                   } finally {
                         try {
                               if (stmt != null) {
@@ -469,7 +471,6 @@ public class Usuario {
             return false;
       }
 
-      
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
       @Override
       public String toString() {

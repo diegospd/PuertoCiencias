@@ -46,7 +46,7 @@ public class ConfirmarCambioPassword extends HttpServlet {
         }
         
         
-        response.sendRedirect(DIR_PUERTO + "login.jsp");
+        response.sendRedirect(DIR_PUERTO + "faces/login.jsp");
         
         
         try (PrintWriter out = response.getWriter()) {

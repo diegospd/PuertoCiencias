@@ -38,9 +38,9 @@
                            action="create"/>
             
             <br/>
-            <h:commandLink id="recuperar_contrasena"
+            <h:commandLink id="recuperar"
                            value="¿Olvidaste tu contraseña?"
-                           action="recuperar_contrasena"/>
+                           action="recuperar"/>
         </h:form>
        
     </f:view>

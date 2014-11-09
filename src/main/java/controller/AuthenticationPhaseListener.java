@@ -124,6 +124,11 @@ public class AuthenticationPhaseListener implements PhaseListener {
     private boolean requestingSecureView(FacesContext context) {
         ExternalContext extContext = context.getExternalContext();       
         String path = extContext.getRequestPathInfo();
-        return (!"/login.jsp".equals(path) && !"/create.jsp".equals(path) && !"/recuperar_contrasena.jsp".equals(path));              
+        boolean ok = !"/login.jsp".equals(path);
+        ok = ok && !"/create.jsp".equals(path);
+        ok = ok && !"/recuperar_contrasena.jsp".equals(path);     
+        ok = ok && !"/recuperar.jsp".equals(path);  
+        
+        return ok;
     }
 }
