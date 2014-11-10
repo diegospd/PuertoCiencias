@@ -53,6 +53,51 @@ public class Comentario {
       }
 
       /**
+       * Con este método podemos votar positiva o negativamente.
+       * @param positivo  
+       */
+      public void votar(boolean positivo) {
+            if (positivo) {
+                  votos++;
+            } else {
+                  votos--;
+            }
+
+            String query = "Update comentario set votos = ?";
+
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            try {
+
+                  conn = model.ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement(query);
+                  stmt.setInt(1, votos);
+                  ResultSet result = stmt.executeQuery();
+
+            } catch (SQLException e) {
+                  //No Quiero que pase
+            } finally {
+
+                  if (stmt != null) {
+                        try {
+                              stmt.close();
+                        } catch (SQLException ex) {
+                              //Que no pasa!
+                        }
+                  }
+
+                  if (conn != null) {
+                        try {
+                              conn.close();
+                        } catch (SQLException ex) {
+                              //Tampoco acá
+                        }
+                  }
+            }
+
+      }
+
+      /**
        * Devuelve una lista de comentarios al buscar el id del profesor y de la materia.
        *
        * @param idProfesor
@@ -142,7 +187,8 @@ public class Comentario {
 
       /**
        * Inserta un comentario creado por hacerComentarioParaPublicar
-       * @throws SQLException 
+       *
+       * @throws SQLException
        */
       public void insertar() throws SQLException {
             Connection conn = null;
@@ -157,7 +203,7 @@ public class Comentario {
                   stmt.setDouble(5, this.valNum);
                   stmt.setString(6, this.texto);
                   stmt.setInt(7, this.votos);
-                  
+
                   int nr = stmt.executeUpdate();
             } finally {
                   try {

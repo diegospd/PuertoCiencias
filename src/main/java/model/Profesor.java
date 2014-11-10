@@ -79,6 +79,15 @@ public class Profesor {
             
       }
       
+      /**
+       * Este método busca todos los comentarios en la base de datos sobre este profesor.
+       * Cada valor del analisis sentimental lo discretiza a uno de cinco valores.
+       * Muy malo, malo, super x, bueno, muy bueno.
+       * 
+       * Devuelve un arreglo de 5 enteros contando cuántos comentarios quedaron en cada rango
+       * en la posición 0 los muy malos y en la 4 los muy buenos.
+       * @return 
+       */
       public int[] sumarizado() {
             return sumarizado(this.idProfesor);
       }

@@ -26,6 +26,17 @@ public class Materia {
             this.nombre = nombre;
       }
 
+      /**
+       * Ya que tenemos la materia, para un plan de estudios y un semestre podemos
+       * obtener la lista de cursos para esta materia.
+       * Cada curso tiene al profesor y el nombre de la materia.
+       * 
+       * El curso que devuelve tiene métodos para obtener todos los comentarios, publicar un nuevo
+       * comentario y obtener el profesor de la materia. El profesor tiene un método para
+       * dar el sumarizado.
+       * 
+       * @return 
+       */
       public List<Curso> obtenerCursos() {
             return Curso.cursosPorMateria(idMateria);
       }

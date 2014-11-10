@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -32,15 +34,34 @@ public class Curso {
             this.profesor = profesor;
       }
 
+      /**
+       * Con este método obtenemos la lista de comentarios.
+       * @param orderByTimestamp Si esto es true entonces se ordenan por la fecha de publicacion, si es false se ordenan por número de votos
+       * @param orderByAsc si es true se ordenan ascendentemente si es false se ordenan descendentemente. 
+       * @return 
+       */
       public List<Comentario> obtenerComentarios(boolean orderByTimestamp, boolean orderByAsc) {
             return Comentario.encuentraComentarios(idProfesor, idMateria, orderByTimestamp, orderByAsc);
       }
       
-      public void publicarComentario(String usuario, String comentario) throws SQLException {
+      /**
+       * Con esto publicamos un nuevo comentario
+       * @param usuario El nombre de usuario
+       * @param comentario El comentario que va a publicar.
+       */
+      public void publicarComentario(String usuario, String comentario) {
             Comentario c = Comentario.hacerComentarioParaPublicar(idCurso, usuario, comentario);
-            c.insertar();
+            try {
+                  c.insertar();
+            } catch (SQLException ex) {
+                  Logger.getLogger(Curso.class.getName()).log(Level.SEVERE, null, ex);
+            }
       }
       
+      /**
+       * Devuelve el profesor de este curso. El profesor tiene un método para obtener el sumarizado.
+       * @return 
+       */
       public Profesor obtenerProfesor() {
             return new Profesor(idProfesor, profesor);
       }

@@ -28,11 +28,24 @@ public class Plan {
             this.ano = ano;
       }
       
-      
+      /**
+       * Usando esta función podemos ir descendiendo en el arbol de
+       * materias. Le damos un semestre y nos regresa la lista de Materias
+       * @param semestre el numero de semestre. 0 es para optativas
+       * @return 
+       */
       public List<Materia> materiasPorSemestre(int semestre) {
             return Materia.materiasPorPlanSemestre(idPlan, semestre);
       }
       
+      
+      /**
+       * Corremos esta funcion y nos da una lista de planes
+       * Cada plan tiene una funcion materiasPorSemestre que
+       * recibe un número de semestre y devuelve las materias dadas en 
+       * ese semestre
+       * @return 
+       */
       public static List<Plan> selectAll() {
             String query = "Select * from plan";
             List<Plan> todo = new LinkedList<Plan>();
