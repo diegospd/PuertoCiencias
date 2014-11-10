@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.bean.ManagedBean;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.DOMException;
@@ -35,16 +36,16 @@ public class Comentario {
       private final static String ALCHEMY_API_KEY = "65dc9c24facaefaacf4abe5ca703710288d52465";
 
       private int idComentario;
-      private Timestamp timestamp;
+//      private Timestamp timestamp; No tiene timestamp porque echaba excecpiones
       private String usuario;
       private int curso;
       private double valNum;
       private String texto;
       private int votos;
 
-      public Comentario(int idComentario, Timestamp timestamp, String usuario, int curso, double valNum, String texto, int votos) {
+      public Comentario(int idComentario,  String usuario, int curso, double valNum, String texto, int votos) {
             this.idComentario = idComentario;
-            this.timestamp = timestamp;
+//            this.timestamp = timestamp;
             this.usuario = usuario;
             this.curso = curso;
             this.valNum = valNum;
@@ -54,7 +55,8 @@ public class Comentario {
 
       /**
        * Con este método podemos votar positiva o negativamente.
-       * @param positivo  
+       *
+       * @param positivo
        */
       public void votar(boolean positivo) {
             if (positivo) {
@@ -107,11 +109,10 @@ public class Comentario {
        * @return La lista de comentarios. En el peor de los casos regresa una lista vacía.
        */
       public static List<Comentario> encuentraComentarios(int idProfesor, int idMateria, boolean orderByTimestamp, boolean orderByAsc) {
-            String query_curso = "Select idCurso From curso where Materia = ? and Profesor = ?";
-            String query_comen = "Select * from Comentario where curso = ? ";
-            query_comen += " ORDER BY ";
-            query_comen += orderByTimestamp ? " timestamp " : " votos ";
-            query_comen += orderByAsc ? " ASC " : " DESC ";
+            String query = "select * from curso join comentario ON(curso.idCurso = comentario.curso) where curso.Profesor = ? and curso.materia=? ";
+            query += " ORDER BY ";
+            query += orderByTimestamp ? " timestamp " : " votos ";
+            query += orderByAsc ? " ASC " : " DESC ";
 
             List<Comentario> cs = new LinkedList<Comentario>();
 
@@ -119,35 +120,22 @@ public class Comentario {
             PreparedStatement stmt = null;
             try {
 
-                  int idCurso = -1; //primero encuentro este
-                  conn = model.ConexionMySQL.darConexion();
-                  stmt = conn.prepareStatement(query_curso);
-                  stmt.setInt(1, idMateria);
+                  conn = ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement(query);
                   stmt.setInt(1, idProfesor);
+                  stmt.setInt(2, idMateria);
                   ResultSet result = stmt.executeQuery();
 
                   while (result.next()) {
-                        idCurso = result.getInt("idCurso");
-                  }
-                  if (idCurso == -1) {
-                        return cs; //Lista vacía
-                  }
-
-                  //Ahora saco la lista de comentarios para ese curso. 
-                  stmt = conn.prepareStatement(query_curso);
-                  stmt.setInt(1, idCurso);
-                  result = stmt.executeQuery();
-
-                  while (result.next()) {
                         int idComentario = result.getInt("idComentario");
-                        Timestamp timestamp = result.getTimestamp("timestamp");
+//                        Timestamp timestamp = result.getTimestamp("timestamp");
                         String usuario = result.getString("usuario");
                         int curso = result.getInt("curso");
                         double valNum = result.getDouble("valNum");
                         String texto = result.getString("texto");
                         int votos = result.getInt("votos");
 
-                        Comentario c = new Comentario(idComentario, timestamp, usuario, curso, valNum, texto, votos);
+                        Comentario c = new Comentario(idComentario, usuario, curso, valNum, texto, votos);
                         cs.add(c);
                   }
 
@@ -177,11 +165,11 @@ public class Comentario {
       }
 
       public static Comentario hacerComentarioParaPublicar(int curso, String usuario, String texto) {
-            Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
+//            Timestamp timestamp = new Timestamp(Calendar.getInstance().getTimeInMillis());
             int idComentario = getMaxId() + 1;
             double valNum = sentimiento(texto);
 
-            Comentario c = new Comentario(idComentario, timestamp, usuario, curso, valNum, texto, 0);
+            Comentario c = new Comentario(idComentario, usuario, curso, valNum, texto, 0);
             return c;
       }
 
@@ -195,14 +183,14 @@ public class Comentario {
             PreparedStatement stmt = null;
             try {
                   conn = ConexionMySQL.darConexion();
-                  stmt = conn.prepareStatement("insert into comentario (idComentario, timestamp, usuario, curso, valNum, texto, votos) values (?,?,?,?,?,?,?)");
+                  stmt = conn.prepareStatement("insert into comentario (idComentario, usuario, curso, valNum, texto, votos) values (?,?,?,?,?,?)");
                   stmt.setInt(1, this.idComentario);
-                  stmt.setTimestamp(2, this.timestamp);
-                  stmt.setString(3, this.usuario);
-                  stmt.setInt(4, this.curso);
-                  stmt.setDouble(5, this.valNum);
-                  stmt.setString(6, this.texto);
-                  stmt.setInt(7, this.votos);
+//                  stmt.setTimestamp(2, this.timestamp);
+                  stmt.setString(2, this.usuario);
+                  stmt.setInt(3, this.curso);
+                  stmt.setDouble(4, this.valNum);
+                  stmt.setString(5, this.texto);
+                  stmt.setInt(6, this.votos);
 
                   int nr = stmt.executeUpdate();
             } finally {
@@ -223,7 +211,6 @@ public class Comentario {
             }
       }
 
-      // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
       public static double sentimiento(String texto) {
             try {
                   AlchemyAPI alchemyObj = AlchemyAPI.GetInstanceFromString(ALCHEMY_API_KEY);
@@ -274,6 +261,7 @@ public class Comentario {
             return maxId;
       }
 
+      // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
       public int getIdComentario() {
             return idComentario;
       }
@@ -282,13 +270,8 @@ public class Comentario {
             this.idComentario = idComentario;
       }
 
-      public Timestamp getTimestamp() {
-            return timestamp;
-      }
 
-      public void setTimestamp(Timestamp timestamp) {
-            this.timestamp = timestamp;
-      }
+
 
       public String getUsuario() {
             return usuario;
@@ -334,7 +317,6 @@ public class Comentario {
       public int hashCode() {
             int hash = 5;
             hash = 29 * hash + this.idComentario;
-            hash = 29 * hash + Objects.hashCode(this.timestamp);
             hash = 29 * hash + Objects.hashCode(this.usuario);
             hash = 29 * hash + this.curso;
             hash = 29 * hash + (int) (Double.doubleToLongBits(this.valNum) ^ (Double.doubleToLongBits(this.valNum) >>> 32));
@@ -355,9 +337,7 @@ public class Comentario {
             if (this.idComentario != other.idComentario) {
                   return false;
             }
-            if (!Objects.equals(this.timestamp, other.timestamp)) {
-                  return false;
-            }
+
             if (!Objects.equals(this.usuario, other.usuario)) {
                   return false;
             }
@@ -378,7 +358,7 @@ public class Comentario {
 
       @Override
       public String toString() {
-            return "Comentario{" + "idComentario=" + idComentario + ", timestamp=" + timestamp + ", usuario=" + usuario + ", curso=" + curso + ", valNum=" + valNum + ", texto=" + texto + ", votos=" + votos + '}';
+            return "Comentario{" + "idComentario=" + idComentario + ", timestamp="  + ", usuario=" + usuario + ", curso=" + curso + ", valNum=" + valNum + ", texto=" + texto + ", votos=" + votos + '}';
       }
 //</editor-fold>
 }

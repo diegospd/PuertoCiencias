@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import java.util.Objects;
  * @author diego
  */
 public class Plan {
+
       private int idPlan;
       private String carrera;
       private int ano; //jeje je
@@ -27,29 +29,27 @@ public class Plan {
             this.carrera = carrera;
             this.ano = ano;
       }
-      
+
       /**
-       * Usando esta función podemos ir descendiendo en el arbol de
-       * materias. Le damos un semestre y nos regresa la lista de Materias
+       * Usando esta función podemos ir descendiendo en el arbol de materias. Le damos un semestre y nos regresa la lista de Materias
+       *
        * @param semestre el numero de semestre. 0 es para optativas
-       * @return 
+       * @return
        */
       public List<Materia> materiasPorSemestre(int semestre) {
             return Materia.materiasPorPlanSemestre(idPlan, semestre);
       }
-      
-      
+
       /**
-       * Corremos esta funcion y nos da una lista de planes
-       * Cada plan tiene una funcion materiasPorSemestre que
-       * recibe un número de semestre y devuelve las materias dadas en 
-       * ese semestre
-       * @return 
+       * Corremos esta funcion y nos da una lista de planes Cada plan tiene una funcion materiasPorSemestre que recibe un número de semestre y
+       * devuelve las materias dadas en ese semestre
+       *
+       * @return
        */
       public static List<Plan> selectAll() {
             String query = "Select * from plan";
             List<Plan> todo = new LinkedList<Plan>();
-            
+
             Connection conn = null;
             PreparedStatement stmt = null;
             try {
@@ -62,7 +62,7 @@ public class Plan {
                         int idPlan = result.getInt("idPlan");
                         String carrera = result.getString("carrera");
                         int ano = result.getInt("año");
-                        
+
                         Plan p = new Plan(idPlan, carrera, ano);
                         todo.add(p);
                   }
@@ -89,7 +89,41 @@ public class Plan {
 
             }
             return todo;
-            
+
+      }
+
+      public int maxSemestre() {
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            int maxSem = 0;
+            try {
+                  conn = ConexionMySQL.darConexion();
+                  //El ifnull es para que regrese cero si no hay máximo cuando la tabla está vacía.
+                  stmt = conn.prepareStatement("SELECT ifnull(max(semestre),0) as max FROM materiaplan where plan=?");
+                  stmt.setInt(1, idPlan);
+                  ResultSet result = stmt.executeQuery();
+                  while (result.next()) {
+                        maxSem = result.getInt("max");
+                  }
+
+            } catch (SQLException e) {
+            } finally {
+                  try {
+                        if (stmt != null) {
+                              stmt.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+                  try {
+                        if (conn != null) {
+                              conn.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+            }
+            return maxSem;
       }
 
       public int getIdPlan() {
@@ -150,7 +184,5 @@ public class Plan {
       public String toString() {
             return "Plan{" + "idPlan=" + idPlan + ", carrera=" + carrera + ", ano=" + ano + '}';
       }
-      
-      
-      
+
 }

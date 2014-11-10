@@ -124,4 +124,49 @@ public class Curso {
             return todo;
       }
 
+      public int getIdCurso() {
+            return idCurso;
+      }
+
+      public void setIdCurso(int idCurso) {
+            this.idCurso = idCurso;
+      }
+
+      public int getIdMateria() {
+            return idMateria;
+      }
+
+      public void setIdMateria(int idMateria) {
+            this.idMateria = idMateria;
+      }
+
+      public int getIdProfesor() {
+            return idProfesor;
+      }
+
+      public void setIdProfesor(int idProfesor) {
+            this.idProfesor = idProfesor;
+      }
+
+      public String getMateria() {
+            return materia;
+      }
+
+      public void setMateria(String materia) {
+            this.materia = materia;
+      }
+
+      public String getProfesor() {
+            return profesor;
+      }
+
+      public void setProfesor(String profesor) {
+            this.profesor = profesor;
+      }
+
+      
+      
+      
+      
+      
 }
