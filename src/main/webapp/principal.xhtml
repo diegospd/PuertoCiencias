@@ -12,8 +12,8 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <h:outputStylesheet name="./css/estilo.css"/>
 
-        <!--<h:outputStylesheet name="./css/default.css"/>-->
-        <!--<h:outputStylesheet name="./css/cssLayout.css"/>-->
+      <h:outputStylesheet name="./css/default.css"/>
+      <h:outputStylesheet name="./css/cssLayout.css"/>
         <title>Puerto Ciencias</title>
 
         <style type="text/css">
@@ -71,6 +71,7 @@
             </h:form>
         </div>
         <div>
+            
             <div id="left">
                 <ui:insert name="left"> 
                     <h:form> 
@@ -84,7 +85,7 @@
 
 
 
-            <div id="content" class="left_content" align="rigth">
+            <div id="content" class="left_content" >
                 <ui:insert name="content">***</ui:insert>
                 <!--                        
                                         
@@ -107,14 +108,14 @@
                 -->
                
                 <h:form id="formComentarios"> 
-                    <p:dataScroller value="#{menuView.comentarios}" var="com" chunkSize="10">
+                    <p:dataScroller style="width: 500px" value="#{menuView.comentarios}" var="com" chunkSize="10">
                         <f:facet name="header">
                             Comentarios
                         </f:facet>
 
 
-                        <p:outputPanel>
-                            <h:panelGrid columns="3" cellpadding="5">
+                        <p:outputPanel style="width: 500px">
+                            <h:panelGrid columns="3" cellpadding="5" style="width: 500px">
                                 <h:outputText value="Usuario:" />
                                 <h:outputText value="#{com.usuario}" style="font-weight: bold"/>
 
