@@ -124,7 +124,9 @@ public class MenuView {
 
             List<Comentario> lista = Comentario.encuentraComentarios(idProfesor, idMateria, true, true);
             this.comentarios = lista;
-            RequestContext.getCurrentInstance().update("tablaComentarios");
+            FacesContext fc=FacesContext.getCurrentInstance();
+            fc.getPartialViewContext().getExecuteIds().add("formComentarios:tablaComentarios");
+           // RequestContext.getCurrentInstance().update(":formComentarios");
 
       }
 

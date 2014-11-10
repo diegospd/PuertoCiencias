@@ -11,7 +11,7 @@ package constantes;
  */
 public class Constantes {
     
-    public static final String DIR_PUERTO = "http://localhost:8080/Puerto/";
+    public static final String DIR_PUERTO = "http://localhost:8080/P2/";
     
     
 }
