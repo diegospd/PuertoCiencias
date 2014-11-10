@@ -1,0 +1,274 @@
+<!-- 
+ * Copyright 2013 WhiteByte (Nick Russler, Ahmet Yueksektepe).
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+
+<ui:composition 
+	xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:cc="http://java.sun.com/jsf/composite"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:wb="http://whitebyte.info/components">
+
+	<cc:interface componentType="info.whitebyte.component.commentbox">
+		<cc:attribute name="contextID" type="java.lang.String"/>
+		<cc:attribute name="comments" type="java.util.List" />		
+		<cc:attribute name="currentPage" type="java.lang.Long" />
+		<cc:attribute name="commentsPerPage" type="java.lang.Long" />
+		<cc:attribute name="commentCount" type="java.lang.Long" />		
+		<cc:attribute name="currentUserID" type="java.lang.Object" />
+		<cc:attribute name="currentUserUsername" type="java.lang.String" />
+		<cc:attribute name="currentUserAvatarUrl" type="java.lang.String" />
+		<cc:attribute name="canEditAll" default="false" type="java.lang.Boolean" />
+		<cc:attribute name="canDeleteAll" default="false" type="java.lang.Boolean" />
+		<cc:attribute name="enableLiveFeatures" default="false" type="java.lang.Boolean" />
+		<cc:attribute name="editorControls" default="bold italic underline strikethrough | icon | image youtube | link unlink | source" type="java.lang.String" />
+		<cc:attribute name="editorSmileyBase" default="#{resource['whitebyte:commentbox/editor-smileys/1.gif']}" type="java.lang.String" />
+		<cc:attribute name="editorSmileyCount" default="12" type="java.lang.String" />
+		<cc:attribute name="editorSmileyPopupWidth" default="60" type="java.lang.String" />
+		<cc:attribute name="onFetchNewComments" method-signature="void myAction()" />
+		<cc:attribute name="onFetchNewAnswers" method-signature="void myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onPageChange" method-signature="void myAction(java.lang.Long)" />
+		<cc:attribute name="onCreateComment" method-signature="boolean myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onCreateAnswer" method-signature="boolean myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onEditComment" method-signature="void myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onCommentLike" method-signature="void myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onCommentSpam" method-signature="void myAction(info.whitebyte.component.commentbox.Comment)" />
+		<cc:attribute name="onCommentDelete" method-signature="void myAction(info.whitebyte.component.commentbox.Comment)" />		
+	</cc:interface>
+
+	<cc:implementation>
+	
+	<script>
+	//<![CDATA[
+	$(function(){
+		// The images are set here because the el is not evaluated in the external js file..
+		$.cleditor.buttons.youtube.css.background = "URL(#{resource['whitebyte:commentbox/film-youtube.png']}) 50% 50% no-repeat";
+		initJQueryCLEditorIconPlugin("#{cc.attrs.editorSmileyBase}", #{cc.attrs.editorSmileyCount}, #{cc.attrs.editorSmileyPopupWidth});
+	});
+	//]]>
+	</script>
+	
+	<p:outputPanel styleClass="comments-#{cc.id} tr-commentbox comments-wrapper">	
+			<p:outputPanel rendered="#{empty cc.attrs.currentUserID}">
+				<b>#{commentboxmsg['commentbox.user.empty']}</b>				
+				<p:separator />
+			</p:outputPanel>
+	
+			<p:outputPanel id="leaveComment" styleClass="newCommentPanel" rendered="#{not empty cc.attrs.currentUserID}">			
+					<h:form style="overflow: hidden;">	
+					
+						<div class="avatar">
+							<h:graphicImage rendered="#{not empty cc.attrs.currentUserAvatarUrl}" value="#{cc.attrs.currentUserAvatarUrl}" />
+						</div>	
+	
+						<div style="float: left;">
+							<a class="username">#{cc.attrs.currentUserUsername}</a>						
+							<p:editor id="editor" styleClass="comment_editor comment_editor-height-hack" value="#{cc.new_comment_editor_text}" controls="#{cc.attrs.editorControls}" height="120" width="600" widgetVar="editor"/>
+				
+							<h:panelGrid styleClass="comment_editorButtons" columns="2" style="margin-top:3px;display: none;">
+								<p:commandButton id="submitButton" styleClass="submitButton" widgetVar="submitButtonVar" value="#{commentboxmsg['commentbox.editor.save']}" icon="ui-icon-disk" update=":#{cc.cid(cc.innerWrapper)}" onclick="submitButtonVar.disable();$('.ui-button-text', this).html('Submitting...');#{cc.id}_commentboxWrapper.initDiffNodes();" oncomplete="submitButtonVar.enable();$(#{cc.id}_commentboxWrapper.comment_id + ' .newCommentPanel .submitButton .ui-button-text').html('Save');editor.clear();#{cc.id}_commentboxWrapper.indicateNewNodes();#{cc.id}_commentboxWrapper.reShowEditors();#{cc.id}_commentboxWrapper.showNewRepliesText();" actionListener="#{cc.createComment(cc.attrs.onCreateComment)}" />
+								<p:commandButton id="clearButton" type="button" value="#{commentboxmsg['commentbox.editor.clear']}" onclick="editor.clear()" icon="ui-icon-close" />
+							</h:panelGrid>					
+						</div>
+					</h:form>					
+					<p:separator style="margin: 14px 0 4px 0 !important;"/>
+			</p:outputPanel>
+
+			<p:outputPanel binding="#{cc.innerWrapper}" id="innerWrapper">				
+				<p:outputPanel styleClass="emptyMessage" rendered="#{empty cc.attrs.comments}">#{commentboxmsg['commentbox.comments.empty']}</p:outputPanel>			
+				<h:form>
+					<p:commandButton value="Show # new Updates" styleClass="updateRootButton" actionListener="#{cc.fetchNewComments(cc.attrs.onFetchNewComments)}" update=":#{cc.cid(cc.innerWrapper)}" onclick="#{cc.id}_commentboxWrapper.initDiffNodes();" oncomplete="#{cc.id}_commentboxWrapper.indicateNewNodes();$('.updateRootButton').fadeOut('fast', function() {#{cc.id}_commentboxWrapper.reShowEditors();});#{cc.id}_commentboxWrapper.reShowEditors();" />
+				</h:form>
+				
+				<span class="hiddenNewComments" style="display: none;">0</span>
+				
+				<p:outputPanel styleClass="comments">
+				    <wb:reversedTree value="#{cc.tree}" var="wrapper" id="tree" widgetVar="treeVar" styleClass="commentTree" cache="false" dynamic="true">
+				        <p:treeNode styleClass="treenode-#{wrapper.right.id} #{wrapper.left ? 'treenode-dummy' : 'treenode-unique-id-'.concat(wrapper.right.id)}">	        
+				        	<p:outputPanel  rendered="#{not wrapper.left}">			        	
+								<h:form id="commentForm">
+									<div class="comment comment-#{wrapper.right.id}" data-commentid="#{wrapper.right.id}">
+										<div class="newIndicator"></div>
+										<div class="avatar">
+											<a href="#{wrapper.right.user_profile_url}"><h:graphicImage id="uploadedImage" value="#{wrapper.right.user_profile_avatar_url}" /></a>
+										</div>
+										<div class="body">
+											<header>											
+												<a href="#{wrapper.right.user_profile_url}" class="username">#{wrapper.right.user_username}</a>
+												
+												<span class="bullet">•</span>
+																							
+												<span>
+													<p:outputPanel styleClass="info">
+														<h:outputText value="#{wrapper.right.modification_time}">
+															<f:converter converterId="info.whitebyte.ConditionalPrettyTimeConveter" />
+														</h:outputText>
+													</p:outputPanel>
+												</span>
+												
+												<p:outputPanel id="comment-likecount" rendered="#{not empty cc.attrs.onCommentLike}">
+													<span class="bullet">•</span>
+													<span class="info">#{commentboxmsg['commentbox.comments.comment.likecount']}: #{wrapper.right.likecount}</span>
+												</p:outputPanel>
+											</header>
+											
+											<div class="comment-text">
+												<h:outputText value="#{wrapper.right.comment_text}" escape="false" />
+											</div>
+											
+											<div class="commentEditorDiv" />
+											
+											<footer style="overflow: hidden;">
+												<menu>
+													<p:outputPanel rendered="#{(not empty cc.attrs.onCommentLike) and (not empty cc.attrs.currentUserID)}">
+														<li class="bullet">•</li>
+														<li class="action lockondelete">
+															<p:commandLink value="#{commentboxmsg['commentbox.comments.comment.like']}" update="comment-likecount" styleClass="#{wrapper.right.deleted ? 'clickedLink' : ''}" onclick="$(this).addClass('clickedLink')" actionListener="#{cc.likeComment(cc.attrs.onCommentLike, wrapper.right)}" />
+														</li>									
+													</p:outputPanel>
+													
+													<p:outputPanel rendered="#{(not empty cc.attrs.onCommentSpam) and (not empty cc.attrs.currentUserID)}">
+														<li class="bullet">•</li>
+														<li class="action lockondelete">
+															<p:commandLink value="#{commentboxmsg['commentbox.comments.comment.spam']}" styleClass="#{wrapper.right.deleted ? 'clickedLink' : ''}" onclick="$(this).addClass('clickedLink')" actionListener="#{cc.spamComment(cc.attrs.onCommentSpam, wrapper.right)}" />
+														</li>
+													</p:outputPanel>								
+																						
+													<p:outputPanel rendered="#{(not empty cc.attrs.onEditComment) and ((not empty cc.attrs.currentUserID) and ((wrapper.right.user_id eq cc.attrs.currentUserID) or cc.attrs.canEditAll))}">
+														<li class="bullet">•</li>
+														<li class="action lockondelete">
+															<a href="javascript:void(0)" rel="nofollow" class="#{wrapper.right.deleted ? 'clickedLink' : ''}" onclick="#{cc.id}_commentboxWrapper.saveCurrentEditComment(#{wrapper.right.id});#{cc.id}_commentboxWrapper.showInlineEditor();inlineEditorVar.saveHTML();">#{commentboxmsg['commentbox.comments.comment.edit']}</a>
+														</li>
+														
+													</p:outputPanel>
+													
+													<p:outputPanel rendered="#{(not empty cc.attrs.onCommentDelete) and ((not empty cc.attrs.currentUserID) and ((wrapper.right.user_id eq cc.attrs.currentUserID) or cc.attrs.canDeleteAll))}">
+														<li class="bullet">•</li>
+														<li class="action lockondelete">
+															<p:commandLink value="#{commentboxmsg['commentbox.comments.comment.delete']}" styleClass="#{wrapper.right.deleted ? 'clickedLink' : ''}" onclick="#{cc.id}_commentboxWrapper.deleteComment(#{wrapper.right.id})" actionListener="#{cc.deleteComment(cc.attrs.onCommentDelete, wrapper.right)}" />
+														</li>
+													</p:outputPanel>
+													
+													<p:outputPanel rendered="#{(not empty cc.attrs.onCreateAnswer) and (not empty cc.attrs.currentUserID)}">
+														<li class="bullet">•</li>
+														<li class="action lockondelete">
+															<a href="javascript:void(0)" rel="nofollow" class="#{wrapper.right.deleted ? 'clickedLink' : ''}" onclick="#{cc.id}_commentboxWrapper.saveCurrentAnswerComment(#{wrapper.right.id});#{cc.id}_commentboxWrapper.showAnswerEditor();">#{commentboxmsg['commentbox.comments.comment.reply']}</a>
+														</li>
+													</p:outputPanel>											
+													
+													<p:outputPanel styleClass="updateAnswersPanel updateAnswersPanel-#{wrapper.right.id}" style="display: none;">
+														<li class="bullet">•</li>
+														<li class="action">												
+															<a href="javascript:void(0)" rel="nofollow" class="getReplies" onclick="var commentid = $(this).closest('div.comment').attr('data-commentid');$(#{cc.id}_commentboxWrapper.comment_id + ' .rcGetAnswersForm').find('[name=\'currentAnswerComment\']').val(commentid);rcGetAnswers();#{cc.id}_commentboxWrapper.updateNodes(treeVar, $(this).closest('.ui-treenode'));$(this).closest('.updateAnswersPanel').css('display', 'none'); delete #{cc.id}_commentboxWrapper.newAnswers[commentid];">Show # new replies</a>
+														</li>
+													</p:outputPanel>
+													
+													<p:outputPanel styleClass="typingUsers" style="display: none;">													
+														<li class="bullet">•</li>
+														<li class="action">
+															<span class="hiddenUsersTyping" style="display: none;">{}</span>
+															<a># Typing User</a>																
+														</li>
+													</p:outputPanel>
+												</menu>
+											</footer>
+										</div>
+									</div>
+								</h:form>						
+							</p:outputPanel>
+							
+							<p:outputPanel rendered="#{wrapper.left}">						
+								<div style="margin-top: 9px;" class="commentAnswerDivWrapper">									
+									<div class="avatar">
+										<h:graphicImage rendered="#{not empty cc.attrs.currentUserAvatarUrl}" value="#{cc.attrs.currentUserAvatarUrl}" />
+									</div>	
+																
+									<div class="commentEditorDivAnswer"></div>					
+								</div>						
+							</p:outputPanel>
+				        </p:treeNode>
+				    </wb:reversedTree>
+				</p:outputPanel>
+
+				<p:outputPanel styleClass="cbpaginagtion" rendered="#{cc.attrs.commentsPerPage lt cc.attrs.commentCount}">
+					<p:separator />
+
+					<h:form style="margin-bottom: 0px; text-align: center;">
+						<p:commandButton style="height: 22px;width: 25px;" icon="ui-icon-arrowthickstop-1-w" update=":#{cc.cid(cc.innerWrapper)}" disabled="#{cc.attrs.currentPage == 1}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 1)}" />
+						<p:commandButton style="height: 22px;width: 25px;" icon="ui-icon-arrowthick-1-w" update=":#{cc.cid(cc.innerWrapper)}" disabled="#{cc.attrs.currentPage == 1}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage - 1)}" />					 
+	
+						<p:outputPanel style="margin-left:10px;margin-right:10px;" rendered="#{cc.attrs.currentPage.longValue() lt 3}">
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="1" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 1)}" disabled="#{cc.attrs.currentPage == 1}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="2" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 2)}" disabled="#{cc.attrs.currentPage == 2}" rendered="#{cc.attrs.commentCount ge ((1)*cc.attrs.commentsPerPage)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="3" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 3)}" disabled="#{cc.attrs.currentPage == 3}" rendered="#{cc.attrs.commentCount ge ((2)*cc.attrs.commentsPerPage)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="4" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 4)}" rendered="#{cc.attrs.commentCount ge ((3)*cc.attrs.commentsPerPage)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="5" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, 5)}" rendered="#{cc.attrs.commentCount ge ((4)*cc.attrs.commentsPerPage)}" />
+						</p:outputPanel>
+
+						<p:outputPanel style="margin-left:10px;margin-right:10px;" rendered="#{cc.attrs.currentPage.longValue() ge 3}">
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="#{''.concat(cc.attrs.currentPage.longValue() - 2)}" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage.longValue() - 2)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="#{''.concat(cc.attrs.currentPage.longValue() - 1)}" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage.longValue() - 1)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="#{''.concat(cc.attrs.currentPage.longValue())}" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage.longValue())}" disabled="true" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="#{''.concat(cc.attrs.currentPage.longValue() + 1)}" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage.longValue() + 1)}" rendered="#{cc.attrs.commentCount ge ((cc.attrs.currentPage + 1)*cc.attrs.commentsPerPage)}" />
+							<p:commandButton styleClass="numberButton" style="height: 22px;width: 25px;" value="#{''.concat(cc.attrs.currentPage.longValue() + 2)}" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage.longValue() + 2)}" rendered="#{cc.attrs.commentCount ge ((cc.attrs.currentPage + 2)*cc.attrs.commentsPerPage)}" />
+						</p:outputPanel>	
+
+						<p:commandButton style="height: 22px;width: 25px;" icon="ui-icon-arrowthick-1-e" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.attrs.currentPage + 1)}" disabled="#{cc.attrs.commentCount lt (cc.attrs.currentPage*cc.attrs.commentsPerPage)}"/>
+						<p:commandButton style="height: 22px;width: 25px;" icon="ui-icon-arrowthickstop-1-e" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.pageChange(cc.attrs.onPageChange, cc.lastPage)}" disabled="#{cc.attrs.commentCount lt (cc.attrs.currentPage*cc.attrs.commentsPerPage)}" />
+
+					</h:form>
+
+				</p:outputPanel>
+
+			</p:outputPanel>
+			
+			<h:form id="inlineEditorForm" styleClass="inlineEditorForm" style="height: 0px; overflow: hidden">
+				<p:editor id="inlineEditor" styleClass="commentseditor inlineEditor" value="#{cc.edit_comment_editor_text}" controls="#{cc.attrs.editorControls}" height="120" width="600" widgetVar="inlineEditorVar" />
+				<p:commandButton id="submitButton" value="#{commentboxmsg['commentbox.editor.save']}" icon="ui-icon-disk" actionListener="#{cc.editComment(cc.attrs.onEditComment)}" onclick="#{cc.id}_commentboxWrapper.submitEdit();#{cc.id}_commentboxWrapper.initDiffNodes();" oncomplete="inlineEditorVar.clear();#{cc.id}_commentboxWrapper.indicateNewNodes();"/>
+				<p:commandButton id="clearButton" type="button" value="#{commentboxmsg['commentbox.editor.clear']}" onclick="inlineEditorVar.clear()" icon="ui-icon-close" />
+				<p:commandButton id="cancelButton" type="button" value="#{commentboxmsg['commentbox.editor.cancel']}" onclick="#{cc.id}_commentboxWrapper.cancelEdit();" icon="ui-icon-close" />
+				<input id="currentEditComment" type="hidden" value="" name="currentEditComment"/>
+			</h:form>
+			
+			<h:form id="answerEditorForm" styleClass="answerEditorForm" style="height: 0px; overflow: hidden">
+				<p:editor id="inlineEditor" styleClass="commentseditor inlineEditor answerEditor" value="#{cc.answer_comment_editor_text}" controls="#{cc.attrs.editorControls}" height="120" width="600" widgetVar="answerEditorVar" />
+				<p:commandButton id="submitButton" ajax="true" value="#{commentboxmsg['commentbox.editor.save']}" icon="ui-icon-disk" update=":#{cc.cid(cc.innerWrapper)}" actionListener="#{cc.answerComment(cc.attrs.onCreateAnswer)}" onclick="#{cc.id}_commentboxWrapper.submitAnswer();#{cc.id}_commentboxWrapper.initDiffNodes();" oncomplete="answerEditorVar.clear();#{cc.id}_commentboxWrapper.reShowEditors();#{cc.id}_commentboxWrapper.indicateNewNodes();"/>
+				<p:commandButton id="clearButton" type="button" value="#{commentboxmsg['commentbox.editor.clear']}" onclick="answerEditorVar.clear();" icon="ui-icon-close" />
+				<p:commandButton id="cancelButton" type="button" value="#{commentboxmsg['commentbox.editor.cancel']}" onclick="#{cc.id}_commentboxWrapper.cancelCreateAnswer();" icon="ui-icon-close" />
+				<input id="currentAnswerComment" type="hidden" value="" name="currentAnswerComment"/>
+			</h:form>
+			
+			<h:form styleClass="rcUserTypingForm">
+				<p:remoteCommand id="rc" name="rcUserTyping" actionListener="#{cc.onUserType}" oncomplete="#{cc.id}_commentboxWrapper.rcUserTyping_callback();" />
+				<input id="currentAnswerComment" type="hidden" value="" name="currentAnswerComment"/>
+			</h:form>
+			
+			<h:form styleClass="rcGetAnswersForm">
+				<p:remoteCommand id="rc" name="rcGetAnswers" actionListener="#{cc.fetchNewAnswers(cc.attrs.onFetchNewAnswers)}" />
+				<input id="currentAnswerComment" type="hidden" value="" name="currentAnswerComment"/>
+			</h:form>
+			
+			<p:socket rendered="#{cc.attrs.enableLiveFeatures}" onMessage="#{cc.id}_commentboxWrapper.handlePushMessage" channel="/commentboxpush-#{cc.id}-#{cc.attrs.contextID}" autoConnect="true" widgetVar="pushVar"/>
+		</p:outputPanel>
+		<script type="text/javascript">
+		//<![CDATA[
+			var #{cc.id}_commentboxWrapper = new commentboxWidget('#{cc.id}', '#{empty cc.attrs.currentUserID ? '': cc.attrs.currentUserID}', JSON.parse('#{cc.messageBundleAsJSON}'));
+		//]]>
+		</script>
+	</cc:implementation>
+
+</ui:composition>

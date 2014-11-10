@@ -1,0 +1,158 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:wb="http://whitebyte.info/components"
+	xmlns:c="http://java.sun.com/jsf/composite/composites">
+
+      <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <h:outputStylesheet name="./css/default.css"/>
+            <h:outputStylesheet name="./css/cssLayout.css"/>
+            <title>Puerto Ciencias</title>
+      </h:head>
+
+      <h:body>
+
+
+            <div id="top" class="top">
+                  <ui:insert name="top">Aquí va nuestro logo y eso. Puerto Ciencias! </ui:insert>
+                  <br/>
+
+                  <ui:insert name="top"> Welcome ${user.username}!  You've been registered. </ui:insert>
+            </div>
+            <div>
+                  <div id="left">
+                        <ui:insert name="left">
+
+                              <h:form>
+                                    <p:growl autoUpdate="true"/>
+
+                                    <p:panelMenu style="width:300px">
+
+                                          <p:submenu label="Ciencias de la Computación" >
+                                                <p:submenu label="Plan 94" >
+                                                      <p:submenu label="Semestre 1 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 2 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 3 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 4 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 5 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 6 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 7 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 8 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                </p:submenu>
+                                                
+                                                <p:submenu label="Plan 2012" >
+                                                      <p:submenu label="Semestre 1 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 2 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 3 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 4 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 5 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 6 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 7 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                      <p:submenu label="Semestre 8 ">
+                                                            <p:menuitem value="Matemáticas Discretas" url="http://www.primefaces.org"  />
+                                                            <p:menuitem value="Geometría Analítica " url="http://www.primefaces.org/documentation"  />
+                                                            <p:menuitem value="Cálculo" url="http://www.primefaces.org/downloads" />
+                                                            <p:menuitem value="Álgebra Superior" url="http://www.primefaces.org/support"  />
+                                                      </p:submenu>
+                                                </p:submenu>
+
+                                          </p:submenu>
+                                          <p:separator />
+                                          
+                                    </p:panelMenu>
+                              </h:form>
+
+                        </ui:insert>
+                  </div>
+
+
+
+
+                  <div id="content" class="left_content">
+                        <ui:insert name="content">Content</ui:insert>
+                        <c:commentBox comments="#{comentario.comments}" />
+                  </div>
+            </div>
+      </h:body>
+
+</html>

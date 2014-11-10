@@ -32,7 +32,8 @@
             
             <navigation-case>
                   <from-outcome>app-main</from-outcome>
-                  <to-view-id>/principal.jsp</to-view-id>
+                   <to-view-id>/principal.jsp</to-view-id>
+<!--                  <to-view-id>/principal.xhtml</to-view-id>-->
                   <redirect/>
             </navigation-case>
             

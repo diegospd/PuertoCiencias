@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Whitebyte
+Built-By: Nick
+Build-Jdk: 1.7.0_13
+Bundle-ManifestVersion: 2
+Bundle-Name: commentbox
+Bundle-Description: Commentbox
+Bundle-SymbolicName: info.whitebyte.commentbox
+
