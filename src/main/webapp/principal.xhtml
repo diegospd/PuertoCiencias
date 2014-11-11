@@ -8,132 +8,209 @@
       xmlns:wb="http://whitebyte.info/components"
       xmlns:c="http://java.sun.com/jsf/composite/composites">
 
-    <h:head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <h:outputStylesheet name="./css/estilo.css"/>
+      <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <h:outputStylesheet name="./css/estilo.css"/>
 
-      <h:outputStylesheet name="./css/default.css"/>
-      <h:outputStylesheet name="./css/cssLayout.css"/>
-        <title>Puerto Ciencias</title>
+            <h:outputStylesheet name="./css/default.css"/>
+            <h:outputStylesheet name="./css/cssLayout.css"/>
+            <title>Puerto Ciencias</title>
 
-        <style type="text/css">
-            body{background-color:#036fab;
-                 font-family: 'Allerta Stencil', sans-serif;}
-            header{background-color: #DAA520;
-                   text-align: left;}
-            @font-face{
-                font-family: "cubic";
-                src:url("resources/cubic/cubic.ttf") format("truetype");
-            }
+            <style type="text/css">
+                  body{background-color:#036fab;
+                       font-family: 'Allerta Stencil', sans-serif;}
+                  header{background-color: #DAA520;
+                         text-align: left;}
+                  @font-face{
+                        font-family: "cubic";
+                        src:url("resources/cubic/cubic.ttf") format("truetype");
+                  }
 
-            div   { text-align:center; }
-            
-            header figure{float: left;
-                          margin-right: 10px;}
-            h1{font-family:"cubic";
-               font-size: 1cm;}
+                  div   { text-align:center; }
 
-            header h1{font-family:"cubic";
-                      color: #f7f7f7;
-                      float: left;
-                      font-size: 1.6cm;
-                      display: block;
-                      margin: 7px 80px 0px 50px;
-                      padding: 0px;}
-            header figure img{width: 100px;
-                              height: 100px;
-                              border-radius:120%;
-                              src:url("resources/imagenes/tron2.jpg");
-            }
-        </style>
-    </h:head>
+                  header figure{float: left;
+                                margin-right: 10px;}
+                  h1{font-family:"cubic";
+                     font-size: 1cm;}
 
-    <h:body>
+                  header h1{font-family:"cubic";
+                            color: #f7f7f7;
+                            float: left;
+                            font-size: 1.6cm;
+                            display: block;
+                            margin: 7px 80px 0px 50px;
+                            padding: 0px;}
+                  header figure img{width: 100px;
+                                    height: 100px;
+                                    border-radius:120%;
+                                    src:url("resources/imagenes/tron2.jpg");
+                  }
+            </style>
+      </h:head>
+
+      <h:body>
 
 
-        <div id="top" class="top">
-            <header>
-                <figure>
-                    <img src="resources/imagenes/tron2.jpg"/>
-                </figure>
-                <ui:insert name="top"> <h1> Puerto Ciencias</h1> </ui:insert>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-                <br/>
-            </header>
-            <ui:insert name="top"> Welcome ${user.username}!  You've been registered. </ui:insert>
-            <h:form>
-                <h:commandButton id="logout" value="CerrarSesión" action="#{userManager.logout}"/>
-            </h:form>
-        </div>
-        <div>
-            
-            <div id="left">
-                <ui:insert name="left"> 
-                    <h:form> 
-                    <p:growl id="messages" showDetail="false"/>
-                    <p:panelMenu style="width:300px" model="#{menuView.model}"  />
-                </h:form>
-                </ui:insert>
-               
+            <div id="top" class="top">
+                  <header>
+                        <figure>
+                              <img src="resources/imagenes/tron2.jpg"/>
+                        </figure>
+                        <ui:insert name="top"> <h1> Puerto Ciencias</h1> </ui:insert>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        <br/>
+                  </header>
+                  <ui:insert name="top"> Welcome ${user.username}!  You've been registered. </ui:insert>
+
+
+                  <h:form>
+                        <p:commandButton id="logout" value="CerrarSesión" action="#{userManager.logout}"/>
+
+                        <p:commandButton value="Facebook/Twitter" />
+                        <p:commandButton value="Cambiar contraseña" />
+
+                  </h:form>
             </div>
 
+            <p:separator/>
+
+            <div>
+
+
+                  <!--Menu de profesores--> 
+
+                  <div id="left">
+                        <ui:insert name="left"> 
+                              <h:form> 
+                                    <p:growl id="messages" showDetail="false"/>
+                                    <p:panelMenu style="width:300px" model="#{menuView.model}"  />
+                              </h:form>
+                        </ui:insert>
+
+                  </div>
 
 
 
-            <div id="content" class="left_content" >
-                <ui:insert name="content">***</ui:insert>
-                <!--                        
-                                        
-                                        <h:form id="formComentarios"> 
-                                              <p:dataTable id="tablaComentarios" value="#{menuView.comentarios}" var="com" >
-                                                    <p:column headerText="Usuario">
-                                                          <h:outputText value="#{com.usuario}"/>
-                                                    </p:column>
-                                                    
-                                                    <p:column headerText="Comentario">
-                                                          <h:outputText value="#{com.texto}" />
-                                                    </p:column>
-                
-                
-                
-                                                    
-                                                    
-                                              </p:dataTable>
-                                        </h:form>
-                -->
-               
-                <h:form id="formComentarios"> 
-                    <p:dataScroller style="width: 500px" value="#{menuView.comentarios}" var="com" chunkSize="10">
-                        <f:facet name="header">
-                            Comentarios
-                        </f:facet>
 
-
-                        <p:outputPanel style="width: 500px">
-                            <h:panelGrid columns="3" cellpadding="5" style="width: 500px">
-                                <h:outputText value="Usuario:" />
-                                <h:outputText value="#{com.usuario}" style="font-weight: bold"/>
-
-                                <h:outputText value="Year:" />
-                                <h:outputText value="#{com.texto}" />
-
-
-                            </h:panelGrid>
-                        </p:outputPanel>
+                  <div id="content" class="left_content" >
+                        <ui:insert name="content">***</ui:insert>
 
 
 
-                    </p:dataScroller>
-                </h:form>
-                        
-            </div>
-        </div>    
-    </h:body>   
+                        <!--Botones y texto para publicar-->
+
+
+                        <h:form id="form_publicar"> 
+                              <h3 style="margin-top: 0">Publica comentarios</h3>
+                              <h:panelGrid columns="2" cellpadding="5">
+
+                                    <p:outputPanel>
+
+                                          <p:commandButton value="¡Publica tu comentario!" action="#{menuView.publicarComentario(user.username)}"   style="width:200px;height:45px" />
+
+                                          <br/><br/>
+                                          <p:commandButton value="Datos del profesor" style="width:200px;height:45px" />
+
+                                    </p:outputPanel>
+                                    <p:inputTextarea id="texto_comentario" value="#{menuView.texto}" required="true" placeholder="Expláyate, a nadie le importa." requiredMessage="No puedes poner un comentario vacio" rows="6" cols="55" />
+
+                              </h:panelGrid>
+                              <p:separator/>     
+
+
+
+                        </h:form>
+
+                        <br/>
+
+
+
+
+
+                        <!--Ordenar los comentarios-->
+
+                        <h:panelGrid columns="2">
+
+                              <h:form>
+                                    <p:growl id="messages" showDetail="true"/>
+
+                                    <p:menuButton value="Ordenar por..">
+                                          <p:menuitem value="Votos"/>
+                                          <p:menuitem value="Fecha" />
+                                    </p:menuButton>
+                              </h:form>
+
+
+                              <h:form>
+                                    <p:growl id="messages" showDetail="true"/>
+
+                                    <p:menuButton value="Ascendentemente?">
+                                          <p:menuitem value="Sí"/>
+                                          <p:menuitem value="No" />
+                                    </p:menuButton>
+                              </h:form>
+
+
+                        </h:panelGrid>
+
+
+
+
+                        <!--Seccion de comentarios--> 
+
+                        <h:form id="formComentarios2"> 
+                              <p:dataScroller id="scroller" style="width: 500px" value="#{menuView.comentarios}" var="com" chunkSize="10">
+                                    <f:facet name="header">
+                                          <h:outputText value="Comentarios para #{menuView.profesor}"/>
+                                    </f:facet>
+
+                                    <h:panelGrid columns="2" style="width:100%" columnClasses="logo,detail">
+                                          <p:outputPanel>
+                                                <h:panelGrid columns="2" cellpadding="5">
+                                                      <h:outputText value="Votos:"/>
+                                                      <h:outputText value="#{com.votos}"/>
+                                                      <h:outputText value="Usuario:"/>
+                                                      <h:outputText value="#{com.usuario}:" style="font-weight: bold"/>
+                                                      <p:commandButton value="Malo" icon="ui-icon-closethick" />
+                                                      <p:commandButton value="Bueno" icon="ui-icon-circle-check" />
+
+                                                </h:panelGrid>
+
+                                          </p:outputPanel>
+
+
+
+                                          <p:outputPanel style="width: 500px">
+
+                                                <h:outputText value="#{com.texto}" />
+
+
+                                          </p:outputPanel>
+
+
+                                    </h:panelGrid>
+
+                                    <p:separator />
+
+                              </p:dataScroller>
+                        </h:form>
+
+
+
+
+
+
+
+
+
+                  </div>
+            </div>    
+      </h:body>   
 
 </html>
 

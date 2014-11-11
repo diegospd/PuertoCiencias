@@ -5,9 +5,7 @@
  */
 package controller.foro;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -24,7 +22,6 @@ import org.primefaces.event.MenuActionEvent;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
-import org.primefaces.model.menu.MenuItem;
 import org.primefaces.model.menu.MenuModel;
 
 @ManagedBean
@@ -33,10 +30,15 @@ public class MenuView {
 
       private MenuModel model;
       private List<Comentario> comentarios;
+      private String materia;
+      private String profesor;
+      private String texto;
+
+      //este atributo sí es privado
+      private Curso curso;
 
       @PostConstruct
       public void init() {
-
             //Primero hago el menu principal
             model = new DefaultMenuModel();
 
@@ -71,11 +73,21 @@ public class MenuView {
                                     Profesor prof = c.obtenerProfesor();
                                     DefaultMenuItem profesor = new DefaultMenuItem(prof.getNombre());
                                     item_materia.addElement(profesor);
-//                                  
+
+                                    //quiero que cuando llegue a un profesor este tenga una acción
+                                    //que al darle clic se active una función distinta para cada uno
+                                    //Como java no tiene funciones de orden superior, y tampoco
+                                    //me dejan pasarle objetos como argumentos tengo que pasar
+                                    //cada uno de los campos del curso como string para reconstruirlo
+                                    //en la función mostrarComentarios
+                                    String idCurso = "" + c.getIdCurso();
                                     String idMateria = "" + c.getIdMateria();
                                     String idProfesor = "" + c.getIdProfesor();
+                                    profesor.setParam("idCurso", idCurso);
                                     profesor.setParam("idMateria", idMateria);
                                     profesor.setParam("idProfesor", idProfesor);
+                                    profesor.setParam("nombreProfesor", c.getProfesor());
+                                    profesor.setParam("nombreMateria", c.getMateria());
                                     profesor.setCommand("#{menuView.mostrarComentarios}");
                               }
 
@@ -101,10 +113,15 @@ public class MenuView {
                               profesor.setCommand("#{menuView.delete}");
                               item_materia.addElement(profesor);
 
+                              //Lo mismo aqui le paso los argumentos y luego los recupero
+                              String idCurso = "" + c.getIdCurso();
                               String idMateria = "" + c.getIdMateria();
                               String idProfesor = "" + c.getIdProfesor();
+                              profesor.setParam("idCurso", idCurso);
                               profesor.setParam("idMateria", idMateria);
                               profesor.setParam("idProfesor", idProfesor);
+                              profesor.setParam("nombreProfesor", c.getProfesor());
+                              profesor.setParam("nombreMateria", c.getMateria());
                               profesor.setCommand("#{menuView.mostrarComentarios}");
                         }
 
@@ -114,56 +131,81 @@ public class MenuView {
 
       }
 
+      /**
+       * No es un metodo en sí pero así es como vuelvo a cargar los comentarios.
+       */
+      private void refrescaLosComentarios() {
+            //Esta era la línea que yo ya tenía, parece que el error era darle el id del form
+            //en lugar de darle el de la tabla
+            RequestContext.getCurrentInstance().update("formComentarios2");
+
+            //Esto es lo que nos puso memo, parece que no funcionaba
+            //FacesContext fc=FacesContext.getCurrentInstance();
+            //fc.getPartialViewContext().getExecuteIds().add("formComentarios:tablaComentarios");
+            //Esta línea dibuja todo otra vez pero es súper inutil, 
+            //fc.getPartialViewContext().setRenderAll(true);
+      }
+
+      /**
+       * Cuando le pican al nombre de un profesor se ejecuta esta función que hace que la lista de comentarios se actualicen a la del profesor y
+       * materia en cuestión.
+       *
+       * @param ev
+       */
       public void mostrarComentarios(ActionEvent ev) {
             //cast para obtener las propiedades 
             MenuActionEvent j = (MenuActionEvent) ev;
             //el menu item al que se dio clic
             DefaultMenuItem itm = (DefaultMenuItem) j.getMenuItem();
+
+            //Ahora recupero todos los campos del curso
+            int idCurso = Integer.parseInt(itm.getParams().get("idCurso").get(0));
             int idMateria = Integer.parseInt(itm.getParams().get("idMateria").get(0));
             int idProfesor = Integer.parseInt(itm.getParams().get("idProfesor").get(0));
+            this.materia = itm.getParams().get("nombreMateria").get(0);
+            this.profesor = itm.getParams().get("nombreProfesor").get(0);
 
-            List<Comentario> lista = Comentario.encuentraComentarios(idProfesor, idMateria, true, true);
-            this.comentarios = lista;
-            FacesContext fc=FacesContext.getCurrentInstance();
-            fc.getPartialViewContext().getExecuteIds().add("formComentarios:tablaComentarios");
-           // RequestContext.getCurrentInstance().update(":formComentarios");
+            //Reconstruyo el curso y obtengo los comentarios
+            this.curso = new Curso(idCurso, idMateria, idProfesor, materia, profesor);
+            this.comentarios = curso.obtenerComentarios(true, false);
 
+            refrescaLosComentarios();
       }
 
-      public void init2() {
-            model = new DefaultMenuModel();
+      /**
+       * Con esto publico comentarios. Recibo el nombre de usuario y mando llamar al método para publicar comentarios del curso que tengo guardado.
+       *
+       * @param usuario
+       */
+      public void publicarComentario(String usuario) {
+            curso.publicarComentario(usuario, texto);
+            texto = null;
+            comentarios = curso.obtenerComentarios(true, false);
+            addMessage("¡Comentario publicado!");
+            RequestContext.getCurrentInstance().reset("form_publicar");
+            refrescaLosComentarios();
+      }
 
-            //First submenu
-            DefaultSubMenu firstSubmenu = new DefaultSubMenu("Dynamic Submenu");
+      public void addMessage(String mensaje) {
+            FacesMessage message = new FacesMessage(mensaje);
+            FacesContext.getCurrentInstance().addMessage(null, message);
+      }
 
-            DefaultMenuItem item = new DefaultMenuItem("External");
-            item.setUrl("http://www.primefaces.org");
-            item.setIcon("ui-icon-home");
-            firstSubmenu.addElement(item);
+      // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
+      public String getMateria() {
+            return materia;
+      }
 
-            model.addElement(firstSubmenu);
+      public void setMateria(String materia) {
+            this.materia = materia;
+      }
 
-            //Second submenu
-            DefaultSubMenu secondSubmenu = new DefaultSubMenu("Dynamic Actions");
+      public String getProfesor() {
+            return profesor;
+      }
 
-            item = new DefaultMenuItem("Save");
-            item.setIcon("ui-icon-disk");
-            item.setCommand("#{menuView.save}");
-            item.setUpdate("messages");
-            secondSubmenu.addElement(item);
-
-            item = new DefaultMenuItem("Delete");
-            item.setIcon("ui-icon-close");
-            item.setCommand("#{menuView.delete}");
-            item.setAjax(false);
-            secondSubmenu.addElement(item);
-
-            item = new DefaultMenuItem("Redirect");
-            item.setIcon("ui-icon-search");
-            item.setCommand("#{menuView.redirect}");
-            secondSubmenu.addElement(item);
-
-            model.addElement(secondSubmenu);
+      public void setProfesor(String profesor) {
+            this.profesor = profesor;
       }
 
       public MenuModel getModel() {
@@ -174,6 +216,14 @@ public class MenuView {
             this.model = model;
       }
 
+      public String getTexto() {
+            return texto;
+      }
+
+      public void setTexto(String texto) {
+            this.texto = texto;
+      }
+
       public List<Comentario> getComentarios() {
             return comentarios;
       }
@@ -181,9 +231,5 @@ public class MenuView {
       public void setComentarios(List<Comentario> comentarios) {
             this.comentarios = comentarios;
       }
-
-      public void addMessage(String summary, String detail) {
-            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO, summary, detail);
-            FacesContext.getCurrentInstance().addMessage(null, message);
-      }
+//</editor-fold>
 }
