@@ -140,8 +140,8 @@
                                     <p:growl id="messages" showDetail="true"/>
 
                                     <p:menuButton value="Ordenar por..">
-                                          <p:menuitem value="Votos"/>
-                                          <p:menuitem value="Fecha" />
+                                          <p:menuitem value="Votos" action="#{menuView.ordenarPorFecha(false)}"/>
+                                          <p:menuitem value="Fecha" action="#{menuView.ordenarPorFecha(true)}" />
                                     </p:menuButton>
                               </h:form>
 
@@ -150,8 +150,8 @@
                                     <p:growl id="messages" showDetail="true"/>
 
                                     <p:menuButton value="Ascendentemente?">
-                                          <p:menuitem value="Sí"/>
-                                          <p:menuitem value="No" />
+                                          <p:menuitem value="Sí" action="#{menuView.ordenarAscendentemente(true)}"/>
+                                          <p:menuitem value="No" action="#{menuView.ordenarAscendentemente(false)}" />
                                     </p:menuButton>
                               </h:form>
 

@@ -33,12 +33,19 @@ public class MenuView {
       private String materia;
       private String profesor;
       private String texto;
+      private boolean asc;
+      private boolean ordenarPorFecha;
 
       //este atributo sí es privado
       private Curso curso;
 
       @PostConstruct
       public void init() {
+            //Valores iniciales
+            profesor = "Elige un profesor";
+            asc = false;
+            ordenarPorFecha = true;
+            
             //Primero hago el menu principal
             model = new DefaultMenuModel();
 
@@ -135,6 +142,8 @@ public class MenuView {
        * No es un metodo en sí pero así es como vuelvo a cargar los comentarios.
        */
       private void refrescaLosComentarios() {
+            this.comentarios = curso.obtenerComentarios(ordenarPorFecha, asc);
+            
             //Esta era la línea que yo ya tenía, parece que el error era darle el id del form
             //en lugar de darle el de la tabla
             RequestContext.getCurrentInstance().update("formComentarios2");
@@ -167,7 +176,6 @@ public class MenuView {
 
             //Reconstruyo el curso y obtengo los comentarios
             this.curso = new Curso(idCurso, idMateria, idProfesor, materia, profesor);
-            this.comentarios = curso.obtenerComentarios(true, false);
 
             refrescaLosComentarios();
       }
@@ -180,18 +188,51 @@ public class MenuView {
       public void publicarComentario(String usuario) {
             curso.publicarComentario(usuario, texto);
             texto = null;
-            comentarios = curso.obtenerComentarios(true, false);
+
             addMessage("¡Comentario publicado!");
             RequestContext.getCurrentInstance().reset("form_publicar");
             refrescaLosComentarios();
       }
 
+      /**
+       * Esto es para el boton de ordenar por fecha, recibe un booleano
+       * y cambia el orden de los comentarios
+       * @param si 
+       */
+      public void ordenarPorFecha(boolean si) {
+            ordenarPorFecha = si;
+            refrescaLosComentarios();
+      }
+      
+      public void ordenarAscendentemente(boolean si) {
+            asc = si;
+            refrescaLosComentarios();
+      }
+      
       public void addMessage(String mensaje) {
             FacesMessage message = new FacesMessage(mensaje);
             FacesContext.getCurrentInstance().addMessage(null, message);
       }
 
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
+
+      public boolean isAsc() {
+            return asc;
+      }
+
+      public void setAsc(boolean asc) {
+            this.asc = asc;
+      }
+
+      public boolean isOrdenarPorFecha() {
+            return ordenarPorFecha;
+      }
+
+      public void setOrdenarPorFecha(boolean ordenarPorFecha) {
+            this.ordenarPorFecha = ordenarPorFecha;
+      }
+      
+      
       public String getMateria() {
             return materia;
       }
