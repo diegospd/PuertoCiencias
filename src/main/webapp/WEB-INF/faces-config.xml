@@ -10,6 +10,13 @@
             </phase-listener>
       </lifecycle>
       
+      <!--Esta  parte es para que funcione el dialogo del pastel sentimental-->
+      <!--https://stackoverflow.com/questions/17128173/jsf-2-primefaces-opendialog-not-working-->
+      <application>
+            <action-listener>org.primefaces.application.DialogActionListener</action-listener>
+            <navigation-handler>org.primefaces.application.DialogNavigationHandler</navigation-handler>
+            <view-handler>org.primefaces.application.DialogViewHandler</view-handler>
+      </application>
       
       <navigation-rule>
             
@@ -32,7 +39,7 @@
             
             <navigation-case>
                   <from-outcome>app-main</from-outcome>
-                   <!--<to-view-id>/principal.jsp</to-view-id>-->
+                  <!--<to-view-id>/principal.jsp</to-view-id>-->
                   <to-view-id>/principal.xhtml</to-view-id>
                   <redirect/>
             </navigation-case>
@@ -41,17 +48,3 @@
 
       
 </faces-config>
-
-<!--
-<navigation-rule> 
- <from-view-id>/pages/inputname.jsp</from-view-id> 
-  <navigation-case> 
-    <from-outcome>sayHello</from-outcome> 
-    <to-view-id>/pages/greeting.jsp</to-view-id> 
-  </navigation-case> 
-  <navigation-case> 
-    <to-view-id>/pages/goodbye.jsp</to-view-id> 
-  </navigation-case> 
-</navigation-rule>  
--->
-

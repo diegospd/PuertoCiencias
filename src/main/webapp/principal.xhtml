@@ -5,10 +5,14 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui"
-      xmlns:wb="http://whitebyte.info/components"
       xmlns:c="http://java.sun.com/jsf/composite/composites">
 
       <h:head>
+            <!--Esto es para que funcione el dialogo del pastel sentimental-->
+            <!--http://lauraliparulo.altervista.org/primefaces-dialog-framework-how-to-make-it-work/-->
+            <h:outputScript name="jquery-ui-1.10.4.custom.min.js"/>
+            
+            
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <h:outputStylesheet name="./css/estilo.css"/>
 
@@ -114,7 +118,7 @@
                                           <p:commandButton value="¡Publica tu comentario!" action="#{menuView.publicarComentario(user.username)}"   style="width:200px;height:45px" />
 
                                           <br/><br/>
-                                          <p:commandButton value="Datos del profesor" style="width:200px;height:45px" />
+                                          <p:commandButton value="Análisis Sentimental" immediate="true" actionListener="#{menuView.pastelSentimental}" style="width:200px;height:45px" />
 
                                     </p:outputPanel>
                                     <p:inputTextarea id="texto_comentario" value="#{menuView.texto}" required="true" placeholder="Expláyate, a nadie le importa." requiredMessage="No puedes poner un comentario vacio" rows="6" cols="55" />

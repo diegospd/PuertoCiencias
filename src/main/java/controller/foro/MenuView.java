@@ -5,7 +5,9 @@
  */
 package controller.foro;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
@@ -19,10 +21,12 @@ import model.Plan;
 import model.Profesor;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.MenuActionEvent;
+import org.primefaces.model.chart.PieChartModel;
 import org.primefaces.model.menu.DefaultMenuItem;
 import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
+
 
 @ManagedBean
 @SessionScoped
@@ -35,6 +39,7 @@ public class MenuView {
       private String texto;
       private boolean asc;
       private boolean ordenarPorFecha;
+      private PieChartModel pastel;
 
       //este atributo sí es privado
       private Curso curso;
@@ -45,7 +50,7 @@ public class MenuView {
             profesor = "Elige un profesor";
             asc = false;
             ordenarPorFecha = true;
-            
+
             //Primero hago el menu principal
             model = new DefaultMenuModel();
 
@@ -143,7 +148,7 @@ public class MenuView {
        */
       private void refrescaLosComentarios() {
             this.comentarios = curso.obtenerComentarios(ordenarPorFecha, asc);
-            
+
             //Esta era la línea que yo ya tenía, parece que el error era darle el id del form
             //en lugar de darle el de la tabla
             RequestContext.getCurrentInstance().update("formComentarios2");
@@ -195,26 +200,60 @@ public class MenuView {
       }
 
       /**
-       * Esto es para el boton de ordenar por fecha, recibe un booleano
-       * y cambia el orden de los comentarios
-       * @param si 
+       * Esto es para el boton de ordenar por fecha, recibe un booleano y cambia el orden de los comentarios
+       *
+       * @param si
        */
       public void ordenarPorFecha(boolean si) {
             ordenarPorFecha = si;
             refrescaLosComentarios();
       }
-      
+
       public void ordenarAscendentemente(boolean si) {
             asc = si;
             refrescaLosComentarios();
       }
-      
+
       public void addMessage(String mensaje) {
             FacesMessage message = new FacesMessage(mensaje);
             FacesContext.getCurrentInstance().addMessage(null, message);
       }
 
+      public void pastelSentimental(ActionEvent e) {
+            pastel = new PieChartModel();
+
+            int[] rs = curso.obtenerProfesor().sumarizado(); //(sic)
+            pastel.set("Terrible", rs[0]);
+            pastel.set("Malo", rs[1]);
+            pastel.set("Normal", rs[2]);
+            pastel.set("Bueno", rs[3]);
+            pastel.set("Grandiso", rs[4]);
+
+            pastel.setTitle("Análisis sentimental para " + this.profesor);
+            pastel.setLegendPosition("e");
+            pastel.setShowDataLabels(true);
+            pastel.setDiameter(250);
+
+            //Ya que tengo configurado el pastel lo muestro en un dialogo
+            Map<String, Object> options = new HashMap<String, Object>();
+            options.put("modal", true);
+            options.put("draggable", false);
+            options.put("resizable", false);
+            options.put("contentHeight", 480);
+
+            RequestContext.getCurrentInstance().openDialog("pastel", options, null);
+
+            profesor += "*";
+      }
+
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
+      public PieChartModel getPastel() {
+            return pastel;
+      }
+
+      public void setPastel(PieChartModel pastel) {
+            this.pastel = pastel;
+      }
 
       public boolean isAsc() {
             return asc;
@@ -231,8 +270,7 @@ public class MenuView {
       public void setOrdenarPorFecha(boolean ordenarPorFecha) {
             this.ordenarPorFecha = ordenarPorFecha;
       }
-      
-      
+
       public String getMateria() {
             return materia;
       }
