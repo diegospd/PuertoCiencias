@@ -70,6 +70,7 @@ public class facebook extends HttpServlet {
             }
 
             token = token.split("=")[1];
+            token = token.split("&")[0];
             Usuario.actualizarFBtoken(idCuenta, token);
             res.sendRedirect(DIR_PUERTO + "faces/principal.xhtml");
 

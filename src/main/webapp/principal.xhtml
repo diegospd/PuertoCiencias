@@ -110,33 +110,19 @@
 
 
                         <h:form id="form_publicar"> 
+                              <p:messages showDetail="true"/>
                               <h3 style="margin-top: 0">Publica comentarios</h3>
-                              <h:panelGrid columns="3" cellpadding="5">
+                              <h:panelGrid columns="2" cellpadding="5">
 
                                     <p:outputPanel>
 
-                                          <p:commandButton value="¡Publica tu comentario!" action="#{menuView.publicarComentario(user.username)}"   style="width:200px;height:45px" />
+                                          <p:commandButton value="¡Publica tu comentario!" action="#{menuView.publicarComentario(user)}"   style="width:200px;height:45px" />
 
                                           <br/><br/>
                                           <p:commandButton value="Análisis Sentimental" immediate="true" actionListener="#{menuView.pastelSentimental}" style="width:200px;height:45px" />
 
                                     </p:outputPanel>
                                     <p:inputTextarea id="texto_comentario" value="#{menuView.texto}" required="true" placeholder="Expláyate, a nadie le importa." requiredMessage="No puedes poner un comentario vacio" rows="6" cols="55" />
-
-
-
-
-
-
-                                    <!--Aqui van los botones de facebbok y twitter-->
-                                    <p:outputPanel>
-                          
-
-
-                                    </p:outputPanel>
-
-
-
 
                               </h:panelGrid>
                               <p:separator/>     

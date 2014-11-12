@@ -487,7 +487,6 @@ public class Usuario {
                         return token;
                   }
 
-                  return null;
 
             } catch (SQLException e) {
                   //No Quiero que pase

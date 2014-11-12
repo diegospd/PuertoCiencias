@@ -5,6 +5,9 @@
  */
 package controller.foro;
 
+import com.restfb.DefaultFacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
 import funciones.Pair;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +24,7 @@ import model.Curso;
 import model.Materia;
 import model.Plan;
 import model.Profesor;
+import model.Usuario;
 import org.primefaces.context.RequestContext;
 import org.primefaces.event.MenuActionEvent;
 import org.primefaces.model.chart.PieChartModel;
@@ -42,7 +46,6 @@ public class MenuView {
       private boolean ordenarPorFecha;
       private PieChartModel pastel;
       private String token;
-      
 
       //este atributo sí es privado
       private Curso curso;
@@ -195,13 +198,19 @@ public class MenuView {
        *
        * @param usuario
        */
-      public void publicarComentario(String usuario) {
-            curso.publicarComentario(usuario, texto);
-            texto = null;
+      public void publicarComentario(Usuario user) {
+            
+            
+            curso.publicarComentario(user.getUsername(), texto);
 
             addMessage("¡Comentario publicado!");
             RequestContext.getCurrentInstance().reset("form_publicar");
             refrescaLosComentarios();
+            
+            token = user.obtenerFBtoken();
+            if (token != null) {
+                  publicaFacebook(user);
+            }
       }
 
       /**
@@ -254,6 +263,12 @@ public class MenuView {
 
       }
 
+      public void publicaFacebook(Usuario user) {
+            DefaultFacebookClient client = new DefaultFacebookClient(token);
+            client.publish("me/feed",FacebookType.class,Parameter.with("message",texto));
+
+      }
+
       public void addMessage(String mensaje) {
             FacesMessage message = new FacesMessage(mensaje);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -290,16 +305,8 @@ public class MenuView {
 
             profesor += "*";
       }
-      
-      public void facebook(){
-            int a = 45;
-            String b = "aasasa";
-      }
-      
-      
 
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
-
       public String getToken() {
             return token;
       }
@@ -307,8 +314,7 @@ public class MenuView {
       public void setToken(String token) {
             this.token = token;
       }
-      
-      
+
       public PieChartModel getPastel() {
             return pastel;
       }
