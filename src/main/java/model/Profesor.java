@@ -32,10 +32,10 @@ public class Profesor {
        * @param idProfesor
        * @return Regresa el arreglo para hacer el histograma que encontró soni.
        */
-      public static int[] sumarizado(int idProfesor) {
-            int[] sumarizado = new int[5];
+      public static double[] sumarizado(int idProfesor) {
+            double[] sumarizado = new double[5];
             for (int i=0; i<5; sumarizado[i++] = 0) {}
-            String query = "select valNum from curso join comentario ON(curso.idCurso = comentario.curso) where curso.Profesor = ?";
+            String query = "select valNum, votos from curso join comentario ON(curso.idCurso = comentario.curso) where curso.Profesor = ?";
             
             
             Connection conn = null;
@@ -49,7 +49,17 @@ public class Profesor {
 
                   while (result.next()) {
                         double valNum = result.getDouble("valNum");
-                        sumarizado[discretiza(valNum)]++;
+                        int votos = result.getInt("votos");
+                        int discreto = discretiza(valNum);
+                        double mult = 1.0;
+                        if (votos > 2) {
+                              mult = votos -1.0;
+                        }
+                        if (votos < -2) {
+                              mult = 1.0 / (votos +1);
+                        }
+                        sumarizado[discreto] += mult;
+
                         
                   }
 
@@ -88,7 +98,7 @@ public class Profesor {
        * en la posición 0 los muy malos y en la 4 los muy buenos.
        * @return 
        */
-      public int[] sumarizado() {
+      public double[] sumarizado() {
             return sumarizado(this.idProfesor);
       }
       

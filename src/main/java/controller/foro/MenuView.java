@@ -265,7 +265,7 @@ public class MenuView {
       public void pastelSentimental(ActionEvent e) {
             pastel = new PieChartModel();
 
-            int[] rs = curso.obtenerProfesor().sumarizado(); //(sic)
+            double[] rs = curso.obtenerProfesor().sumarizado(); //(sic)
             pastel.set("Terrible", rs[0]);
             pastel.set("Malo", rs[1]);
             pastel.set("Normal", rs[2]);
