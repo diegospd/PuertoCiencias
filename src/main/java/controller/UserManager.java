@@ -138,10 +138,7 @@ public class UserManager {
             return "login";
       }
 
-//      public boolean isLoggedIn() {
-//            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-//            return session != null;
-//      }
+
       /**
        * <p>
        * This will attempt to lookup a <code>Usuario</code> object based on the provided username.</p>
@@ -195,6 +192,12 @@ public class UserManager {
             }
       }
 
+      /**
+       * Cambia la contrasena del usuario usando los campos passCambio con la contrasena actual
+       * para verificar que sea la correcta, y passNueva1 y 2 para verificar que coincidan.
+       * @param username
+       * @return 
+       */
       public String cambiarPassword(String username) {
             this.username = username;
             Usuario user = getUser();
@@ -226,14 +229,6 @@ public class UserManager {
 
       }
 
-      private static void mandarVerificacionCorreo(Usuario usuario) {
-            String texto = "¡Hola, " + usuario.getUsername() + "!\n\n";
-            texto += "Te damos la bienvenida a Puerto Ciencias.\nPara poder usar tu cuenta por favor accede al siguiente enlace.\n\n";
-            texto += constantes.Constantes.DIR_PUERTO + "VerificarCorreo?codigo=" + usuario.getCodigo() + "\n\n\n";
-            texto += "Que la fuerza te acompañe,\nAstillero Ciencias";
-
-            SendGrid.enviarCorreo(usuario.getCorreo() + "@ciencias.unam.mx", "[PuertoCiencias] Confirmar Registro", texto);
-      }
 
       /**
        * Dice si la contrasena tiene el formato que dimos en el SRS
@@ -311,6 +306,7 @@ public class UserManager {
             return verificador == suma % 10;
       }
 
+      // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
       public String getPassCambio() {
             return passCambio;
       }
@@ -390,5 +386,6 @@ public class UserManager {
       public void setActivada(boolean activada) {
             this.activada = activada;
       }
+      //</editor-fold>
 
 }

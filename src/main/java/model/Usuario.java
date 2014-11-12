@@ -487,7 +487,6 @@ public class Usuario {
                         return token;
                   }
 
-
             } catch (SQLException e) {
                   //No Quiero que pase
             } finally {
@@ -522,6 +521,35 @@ public class Usuario {
                   stmt = conn.prepareStatement("Update usuario set fb_token = ? where idCuenta = ?");
                   stmt.setString(1, token);
                   stmt.setInt(2, idCuenta);
+
+                  nr = stmt.executeUpdate();
+            } catch (Exception e) {
+            } finally {
+                  try {
+                        if (stmt != null) {
+                              stmt.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+                  try {
+                        if (conn != null) {
+                              conn.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+            }
+      }
+
+      public void desvincularFacebook() {
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            int nr;
+            try {
+                  conn = ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement("Update usuario set fb_token = NULL where idCuenta = ?");
+                  stmt.setInt(1, idCuenta);
 
                   nr = stmt.executeUpdate();
             } catch (Exception e) {

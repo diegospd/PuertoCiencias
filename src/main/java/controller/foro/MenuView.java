@@ -196,7 +196,7 @@ public class MenuView {
       /**
        * Con esto publico comentarios. Recibo el nombre de usuario y mando llamar al método para publicar comentarios del curso que tengo guardado.
        *
-       * @param usuario
+       * @param user
        */
       public void publicarComentario(Usuario user) {
             
@@ -223,6 +223,10 @@ public class MenuView {
             refrescaLosComentarios();
       }
 
+      /**
+       * Para ordenar ascendentemente los comentarios si el booleano es true
+       * @param si 
+       */
       public void ordenarAscendentemente(boolean si) {
             asc = si;
             refrescaLosComentarios();
@@ -263,12 +267,27 @@ public class MenuView {
 
       }
 
-      public void publicaFacebook(Usuario user) {
+      /**
+       * Esta función se llama dentro de la función de publicar comentario cuando tengamos
+       * guardada el token de facebook.
+       * @param user 
+       */
+      private void publicaFacebook(Usuario user) {
             DefaultFacebookClient client = new DefaultFacebookClient(token);
             client.publish("me/feed",FacebookType.class,Parameter.with("message",texto));
+            addMessage("Cuidado. Estamos publicando en Facebook.");
 
       }
 
+      public void desvincularFacebook(Usuario user) {
+            token = null;
+            user.desvincularFacebook();
+      }
+      
+      /**
+       * Para mandar mensajes
+       * @param mensaje 
+       */
       public void addMessage(String mensaje) {
             FacesMessage message = new FacesMessage(mensaje);
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -302,8 +321,6 @@ public class MenuView {
             options.put("contentHeight", 480);
 
             RequestContext.getCurrentInstance().openDialog("pastel", options, null);
-
-            profesor += "*";
       }
 
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
