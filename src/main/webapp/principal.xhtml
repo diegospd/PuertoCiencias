@@ -4,15 +4,14 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:p="http://primefaces.org/ui"
-      xmlns:c="http://java.sun.com/jsf/composite/composites">
+      xmlns:p="http://primefaces.org/ui">
 
       <h:head>
             <!--Esto es para que funcione el dialogo del pastel sentimental-->
             <!--http://lauraliparulo.altervista.org/primefaces-dialog-framework-how-to-make-it-work/-->
             <h:outputScript name="jquery-ui-1.10.4.custom.min.js"/>
-            
-            
+
+
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <h:outputStylesheet name="./css/estilo.css"/>
 
@@ -74,9 +73,10 @@
 
                   <h:form>
                         <p:commandButton id="logout" value="CerrarSesión" action="#{userManager.logout}"/>
+                        <p:commandButton value="Cambiar contraseña" action="cambio_pass"/>
 
                         <p:commandButton value="Facebook/Twitter" />
-                        <p:commandButton value="Cambiar contraseña" />
+
 
                   </h:form>
             </div>
@@ -111,7 +111,7 @@
 
                         <h:form id="form_publicar"> 
                               <h3 style="margin-top: 0">Publica comentarios</h3>
-                              <h:panelGrid columns="2" cellpadding="5">
+                              <h:panelGrid columns="3" cellpadding="5">
 
                                     <p:outputPanel>
 
@@ -122,6 +122,21 @@
 
                                     </p:outputPanel>
                                     <p:inputTextarea id="texto_comentario" value="#{menuView.texto}" required="true" placeholder="Expláyate, a nadie le importa." requiredMessage="No puedes poner un comentario vacio" rows="6" cols="55" />
+
+
+
+
+
+
+                                    <!--Aqui van los botones de facebbok y twitter-->
+                                    <p:outputPanel>
+                          
+
+
+                                    </p:outputPanel>
+
+
+
 
                               </h:panelGrid>
                               <p:separator/>     

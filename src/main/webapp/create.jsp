@@ -98,7 +98,7 @@
                                 </br>
                                 <h2>Verificar Password:</h2>
                                     <h:inputSecret id="pass2"   
-                                            requiredMessage="*Verifica tu passwor, campo necesario"
+                                            requiredMessage="*Verifica tu password, campo necesario"
                                             value="#{userManager.pass2}"
                                             required="true"/>
                                 <h:message for="create:pass2" style="color: red"/>

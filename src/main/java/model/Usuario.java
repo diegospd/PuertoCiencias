@@ -100,6 +100,47 @@ public class Usuario {
       }
 
       /**
+       * Recibe una cadena con el password, le aplica el hash y lo cambia como nueva contrasena en la base de datos
+       * @param nuevaPassword 
+       */
+      public void cambiarPassword(String nuevaPassword) {
+            nuevaPassword = sha1(nuevaPassword);
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            int nr = -1;
+            try {
+
+                  conn = model.ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement("UPDATE usuario set pass = ? where idCuenta = ?");
+                  stmt.setString(1, nuevaPassword);
+                  stmt.setInt(2, this.idCuenta);
+                  nr = stmt.executeUpdate();
+
+
+            } catch (SQLException e) {
+                  //No Quiero que pase
+            } finally {
+
+                  if (stmt != null) {
+                        try {
+                              stmt.close();
+                        } catch (SQLException ex) {
+                              //Que no pasa!
+                        }
+                  }
+
+                  if (conn != null) {
+                        try {
+                              conn.close();
+                        } catch (SQLException ex) {
+                              //Tampoco acá
+                        }
+                  }
+
+            }
+      }
+      
+      /**
        * Busca por username y devuelve un Usuario con los datos de la DB o null si no ecnotnro.
        *
        * @param username

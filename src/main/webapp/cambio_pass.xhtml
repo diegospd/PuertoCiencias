@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+      <h:head>
+            <title>Cambio de Contraseña</title>
+      </h:head>
+      <h:body>
+            <f:view>
+
+                  <div align="center">
+                        <h:form id="cambio_contrasena">
+                              <p:messages autoUpdate="true" id="messages" showDetail="true" />
+                              <h:outputText value="Hola, #{user.username} aquí puedes cambiar tu contraseña."/>
+                              <br/>
+                              <h:panelGrid columns="3">
+                                    <h:outputText value="Contraseña actual:" />
+                                    <h:inputSecret id="pass_actual"
+                                                   requiredMessage="Debes escribir tu contraseña actual"
+                                                   value="#{userManager.passCambio}"
+                                                   required="false"/>
+                                    <h:message for="cambio_contrasena:pass_actual" style="color: red"/>
+
+                                    <h:outputText value="Nueva contraseña:" />
+                                    <h:inputSecret id="pass_nueva1"
+                                                   requiredMessage="Debes escribir una nueva contraseña"
+                                                   value="#{userManager.passNueva1}"
+                                                   required="false"/>
+                                    <h:message for="cambio_contrasena:pass_nueva1" style="color: red"/>
+
+                                    <h:outputText value="Confirma nueva contraseña:" />
+                                    <h:inputSecret id="pass_nueva2"
+                                                   requiredMessage="Debes de confirmar tu contraseña"
+                                                   value="#{userManager.passNueva2}"
+                                                   required="false"/>
+                                    <h:message for="cambio_contrasena:pass_nueva2" style="color: red"/>
+                              </h:panelGrid>
+
+                              <h:panelGrid columns="2" >
+
+                                    <p:commandButton value="Cambia tu contraseña" action="#{userManager.cambiarPassword(user.username)}"/>
+                                    <p:commandLink value="Volver al foro" action="principal"/>
+
+                              </h:panelGrid>
+
+
+                        </h:form>
+                  </div>
+            </f:view>
+
+      </h:body>
+</html>
+
