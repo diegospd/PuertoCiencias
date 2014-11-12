@@ -204,7 +204,7 @@ public class MenuView {
             curso.publicarComentario(user.getUsername(), texto);
 
             addMessage("¡Comentario publicado!");
-            RequestContext.getCurrentInstance().reset("form_publicar");
+//            RequestContext.getCurrentInstance().reset("form_publicar");
             refrescaLosComentarios();
             
             token = user.obtenerFBtoken();

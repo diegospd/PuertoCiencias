@@ -121,6 +121,20 @@
                                           <br/><br/>
                                           <p:commandButton value="Análisis Sentimental" immediate="true" actionListener="#{menuView.pastelSentimental}" style="width:200px;height:45px" />
 
+                                          <br/>
+                                          <a href="https://twitter.com/share" class="twitter-share-button" data-text="Publiqué un comentario en Puerto Ciencias! #{menuView.texto}" data-size="large" data-count="none">Tweet</a>
+                                          <script>!function (d, s, id) {
+                                                      var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                                                      if (!d.getElementById(id)) {
+                                                            js = d.createElement(s);
+                                                            js.id = id;
+                                                            js.src = p + '://platform.twitter.com/widgets.js';
+                                                            fjs.parentNode.insertBefore(js, fjs);
+                                                      }
+                                                }(document, 'script', 'twitter-wjs');
+                                          </script>
+
+                                          
                                     </p:outputPanel>
                                     <p:inputTextarea id="texto_comentario" value="#{menuView.texto}" required="true" placeholder="Expláyate, a nadie le importa." requiredMessage="No puedes poner un comentario vacio" rows="6" cols="55" />
 
