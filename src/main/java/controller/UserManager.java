@@ -47,6 +47,9 @@ public class UserManager {
       private String codigo;
       private String numCuenta;
       private boolean activada;
+      private String passCambio;
+      private String passNueva1;
+      private String passNueva2;
 
       /**
        * <p>
@@ -179,6 +182,7 @@ public class UserManager {
                   }
 
                   context.getExternalContext().getSessionMap().put(USER_SESSION_KEY, user);
+                  this.username = user.getUsername();
                   return "app-main";
             } else {
                   FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
@@ -190,11 +194,39 @@ public class UserManager {
                   return null;
             }
       }
-      
-      
-          
-      
-      public static void mandarVerificacionCorreo(Usuario usuario) {
+
+      public String cambiarPassword(String username) {
+            this.username = username;
+            Usuario user = getUser();
+
+            FacesContext context = FacesContext.getCurrentInstance();
+            if (!user.passwordCorrecta(passCambio)) {
+                  FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                          "Error! No pude cambiar tu contraseña",
+                          "La contraseña actual no es correcta!");
+                  context.addMessage(null, message);
+                  return null;
+            }
+
+            //Las dos contraseñas deben coincidir
+            if (!passNueva1.equals(passNueva2)) {
+                  FacesMessage message = new FacesMessage("Las contraseñas no coinciden. Escríbelas de nuevo.");
+                  context.addMessage(null, message);
+                  return null;
+            }
+
+            if (!contrasenaValida(passNueva1)) {
+                  FacesMessage message = new FacesMessage("La contraseña debe tener entre 6 y 16 caracteres alfanuméricos.");
+                  context.addMessage(null, message);
+                  return null;
+            }
+            
+            user.cambiarPassword(passNueva1);
+            return "app-main";
+
+      }
+
+      private static void mandarVerificacionCorreo(Usuario usuario) {
             String texto = "¡Hola, " + usuario.getUsername() + "!\n\n";
             texto += "Te damos la bienvenida a Puerto Ciencias.\nPara poder usar tu cuenta por favor accede al siguiente enlace.\n\n";
             texto += constantes.Constantes.DIR_PUERTO + "VerificarCorreo?codigo=" + usuario.getCodigo() + "\n\n\n";
@@ -279,7 +311,29 @@ public class UserManager {
             return verificador == suma % 10;
       }
 
-      
+      public String getPassCambio() {
+            return passCambio;
+      }
+
+      public void setPassCambio(String passCambio) {
+            this.passCambio = passCambio;
+      }
+
+      public String getPassNueva1() {
+            return passNueva1;
+      }
+
+      public void setPassNueva1(String passNueva1) {
+            this.passNueva1 = passNueva1;
+      }
+
+      public String getPassNueva2() {
+            return passNueva2;
+      }
+
+      public void setPassNueva2(String passNueva2) {
+            this.passNueva2 = passNueva2;
+      }
 
       public String getUsername() {
             return username;
