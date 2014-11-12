@@ -5,6 +5,8 @@
  */
 package controller.foro;
 
+import funciones.Pair;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,6 @@ import org.primefaces.model.menu.DefaultMenuModel;
 import org.primefaces.model.menu.DefaultSubMenu;
 import org.primefaces.model.menu.MenuModel;
 
-
 @ManagedBean
 @SessionScoped
 public class MenuView {
@@ -43,6 +44,7 @@ public class MenuView {
 
       //este atributo sí es privado
       private Curso curso;
+      private ArrayList<Pair<Integer, Boolean>> comentariosVotados;
 
       @PostConstruct
       public void init() {
@@ -50,6 +52,7 @@ public class MenuView {
             profesor = "Elige un profesor";
             asc = false;
             ordenarPorFecha = true;
+            comentariosVotados = new ArrayList<>();
 
             //Primero hago el menu principal
             model = new DefaultMenuModel();
@@ -214,11 +217,51 @@ public class MenuView {
             refrescaLosComentarios();
       }
 
+      /**
+       * Con esto voto los comentarios, evito que voten mas de una vez por sesión
+       *
+       * @param com
+       * @param positivo
+       */
+      public void votar(Comentario com, boolean positivo) {
+            Integer idComentario = com.getIdComentario();
+            Pair<Integer, Boolean> bueno = new Pair(idComentario, true);
+            Pair<Integer, Boolean> malo = new Pair(idComentario, false);
+            Pair<Integer, Boolean> voto = new Pair(idComentario, positivo);
+
+            //Si ya habia votado positivamente entonces este voto cuenta por dos negativos
+            if (comentariosVotados.contains(bueno)) {
+                  if (!positivo) {
+                        com.votar(false);
+                        com.votar(false);
+                        comentariosVotados.remove(bueno);
+                        comentariosVotados.add(voto);
+                  }
+            } else if (comentariosVotados.contains(malo)) {
+                  if (positivo) {
+                        com.votar(true);
+                        com.votar(true);
+                        comentariosVotados.remove(malo);
+                        comentariosVotados.add(voto);
+                  }
+            } else {
+                  com.votar(positivo);
+                  comentariosVotados.add(voto);
+            }
+            refrescaLosComentarios();
+
+      }
+
       public void addMessage(String mensaje) {
             FacesMessage message = new FacesMessage(mensaje);
             FacesContext.getCurrentInstance().addMessage(null, message);
       }
 
+      /**
+       * Esta función abre la ventana con el pastel sentimental
+       *
+       * @param e
+       */
       public void pastelSentimental(ActionEvent e) {
             pastel = new PieChartModel();
 

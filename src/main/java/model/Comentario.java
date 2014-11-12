@@ -12,14 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.faces.bean.ManagedBean;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 import org.w3c.dom.DOMException;
@@ -42,6 +37,7 @@ public class Comentario {
       private double valNum;
       private String texto;
       private int votos;
+      
 
       public Comentario(int idComentario,  String usuario, int curso, double valNum, String texto, int votos) {
             this.idComentario = idComentario;
@@ -65,7 +61,8 @@ public class Comentario {
                   votos--;
             }
 
-            String query = "Update comentario set votos = ?";
+            int nr;
+            String query = "Update comentario set votos = ? where idComentario = ?";
 
             Connection conn = null;
             PreparedStatement stmt = null;
@@ -74,7 +71,8 @@ public class Comentario {
                   conn = model.ConexionMySQL.darConexion();
                   stmt = conn.prepareStatement(query);
                   stmt.setInt(1, votos);
-                  ResultSet result = stmt.executeQuery();
+                  stmt.setInt(2, idComentario);
+                  nr = stmt.executeUpdate();
 
             } catch (SQLException e) {
                   //No Quiero que pase
@@ -211,6 +209,10 @@ public class Comentario {
             }
       }
 
+      
+      
+
+      
       public static double sentimiento(String texto) {
             try {
                   AlchemyAPI alchemyObj = AlchemyAPI.GetInstanceFromString(ALCHEMY_API_KEY);
@@ -262,6 +264,8 @@ public class Comentario {
       }
 
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
+
+      
       public int getIdComentario() {
             return idComentario;
       }

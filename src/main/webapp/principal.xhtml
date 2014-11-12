@@ -183,6 +183,7 @@
                         <!--Seccion de comentarios--> 
 
                         <h:form id="formComentarios2"> 
+                              <p:growl id="growl" showDetail="true" sticky="true" />  
                               <p:dataScroller id="scroller" style="width: 500px" value="#{menuView.comentarios}" var="com" chunkSize="10">
                                     <f:facet name="header">
                                           <h:outputText value="Comentarios para #{menuView.profesor}"/>
@@ -195,8 +196,8 @@
                                                       <h:outputText value="#{com.votos}"/>
                                                       <h:outputText value="Usuario:"/>
                                                       <h:outputText value="#{com.usuario}:" style="font-weight: bold"/>
-                                                      <p:commandButton value="Malo" icon="ui-icon-closethick" />
-                                                      <p:commandButton value="Bueno" icon="ui-icon-circle-check" />
+                                                      <p:commandButton value="Malo" icon="ui-icon-closethick" action="#{menuView.votar(com, false)}" />
+                                                      <p:commandButton value="Bueno" action="#{menuView.votar(com, true)}" icon="ui-icon-circle-check" />
 
                                                 </h:panelGrid>
 
