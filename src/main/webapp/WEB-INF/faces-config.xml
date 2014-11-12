@@ -27,6 +27,12 @@
             </navigation-case>
             
             <navigation-case>
+                  <from-outcome>fb</from-outcome>
+                  <to-view-id>/fb.jsp</to-view-id>
+                  <redirect/>
+            </navigation-case>
+            
+            <navigation-case>
                   <from-outcome>logout</from-outcome>
                   <to-view-id>/login.jsp</to-view-id>
                   <redirect/>

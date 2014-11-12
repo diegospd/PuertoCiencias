@@ -41,6 +41,8 @@ public class MenuView {
       private boolean asc;
       private boolean ordenarPorFecha;
       private PieChartModel pastel;
+      private String token;
+      
 
       //este atributo sí es privado
       private Curso curso;
@@ -288,8 +290,25 @@ public class MenuView {
 
             profesor += "*";
       }
+      
+      public void facebook(){
+            int a = 45;
+            String b = "aasasa";
+      }
+      
+      
 
       // <editor-fold defaultstate="collapsed" desc="Verborrea: Getters y Setters.">
+
+      public String getToken() {
+            return token;
+      }
+
+      public void setToken(String token) {
+            this.token = token;
+      }
+      
+      
       public PieChartModel getPastel() {
             return pastel;
       }

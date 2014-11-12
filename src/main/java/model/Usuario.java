@@ -101,7 +101,8 @@ public class Usuario {
 
       /**
        * Recibe una cadena con el password, le aplica el hash y lo cambia como nueva contrasena en la base de datos
-       * @param nuevaPassword 
+       *
+       * @param nuevaPassword
        */
       public void cambiarPassword(String nuevaPassword) {
             nuevaPassword = sha1(nuevaPassword);
@@ -115,7 +116,6 @@ public class Usuario {
                   stmt.setString(1, nuevaPassword);
                   stmt.setInt(2, this.idCuenta);
                   nr = stmt.executeUpdate();
-
 
             } catch (SQLException e) {
                   //No Quiero que pase
@@ -139,7 +139,7 @@ public class Usuario {
 
             }
       }
-      
+
       /**
        * Busca por username y devuelve un Usuario con los datos de la DB o null si no ecnotnro.
        *
@@ -470,6 +470,78 @@ public class Usuario {
                   }
             }
 
+      }
+
+      public String obtenerFBtoken() {
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            try {
+
+                  conn = model.ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement("select fb_token from usuario where idCuenta = ?");
+                  stmt.setInt(1, idCuenta);
+                  ResultSet result = stmt.executeQuery();
+
+                  while (result.next()) {
+                        String token = result.getString("fb_token");
+                        return token;
+                  }
+
+                  return null;
+
+            } catch (SQLException e) {
+                  //No Quiero que pase
+            } finally {
+
+                  if (stmt != null) {
+                        try {
+                              stmt.close();
+                        } catch (SQLException ex) {
+                              //Que no pasa!
+                        }
+                  }
+
+                  if (conn != null) {
+                        try {
+                              conn.close();
+                        } catch (SQLException ex) {
+                              //Tampoco acá
+                        }
+                  }
+
+            }
+            return null;
+
+      }
+
+      public static void actualizarFBtoken(int idCuenta, String token) {
+            Connection conn = null;
+            PreparedStatement stmt = null;
+            int nr;
+            try {
+                  conn = ConexionMySQL.darConexion();
+                  stmt = conn.prepareStatement("Update usuario set fb_token = ? where idCuenta = ?");
+                  stmt.setString(1, token);
+                  stmt.setInt(2, idCuenta);
+
+                  nr = stmt.executeUpdate();
+            } catch (Exception e) {
+            } finally {
+                  try {
+                        if (stmt != null) {
+                              stmt.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+                  try {
+                        if (conn != null) {
+                              conn.close();
+                        }
+                  } catch (Exception e) {
+                        // log this error
+                  }
+            }
       }
 
       /**
